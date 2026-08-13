@@ -7,6 +7,11 @@ const WHATSAPP_MESSAGE = "Hola! Quiero sumar mi negocio a VideoCallShop.";
 
 const RUBROS = ["Indumentaria", "Calzado", "Electro", "Cosmética", "Otro"];
 
+// Mail de aviso: se dispara además del guardado en Supabase, solo para notificar.
+// No reemplaza la base de datos — los leads reales siempre quedan en Supabase.
+const NOTIFY_EMAIL = "videocallshoppping@gmail.com";
+const NOTIFY_ENDPOINT = `https://formsubmit.co/ajax/${NOTIFY_EMAIL}`;
+
 export default function LandingNegocios() {
   const [form, setForm] = useState({
     nombre: "",
@@ -38,6 +43,23 @@ export default function LandingNegocios() {
       console.error("Error guardando el lead:", error);
       setStatus("error");
       return;
+    }
+
+    // Aviso por mail (best-effort): si falla, el lead ya quedó guardado en Supabase igual.
+    try {
+      await fetch(NOTIFY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          Nombre: form.nombre,
+          Negocio: form.negocio,
+          Rubro: form.rubro,
+          WhatsApp: form.whatsapp,
+          _subject: `Nuevo lead: ${form.negocio || form.nombre}`,
+        }),
+      });
+    } catch (notifyError) {
+      console.warn("No se pudo enviar el aviso por mail:", notifyError);
     }
 
     setStatus("success");
