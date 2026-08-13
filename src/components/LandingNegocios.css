@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap');
+
+.vcs-landing {
+  --coral: #D85A30;
+  --coral-light: #F0997B;
+  --green: #3ecf8e;
+  --dark: #0a0a0f;
+  --card: #111119;
+  --card-2: #15151f;
+  --border: #232330;
+  --text: #f4f3ef;
+  --muted: #9a9a95;
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--dark);
+  color: var(--text);
+  line-height: 1.5;
+}
+.vcs-landing * { box-sizing: border-box; }
+.vcs-display {
+  font-family: 'Anton', Impact, sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+/* WHATSAPP FLOTANTE */
+.vcs-whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #0a0a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  z-index: 50;
+  transition: transform .15s ease;
+}
+.vcs-whatsapp-float:hover { transform: translateY(-2px) scale(1.04); }
+
+/* HERO */
+.vcs-hero {
+  position: relative;
+  padding: 72px 24px 88px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(10,10,15,0.97) 0%, rgba(10,10,15,0.75) 55%, rgba(10,10,15,0.4) 100%),
+    radial-gradient(circle at 80% 20%, rgba(62,207,142,0.12), transparent 55%);
+  border-bottom: 1px solid var(--border);
+}
+.vcs-hero-inner { max-width: 640px; position: relative; margin: 0 auto; }
+.vcs-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.vcs-eyebrow-coral { color: var(--coral-light); }
+h1.vcs-display {
+  font-size: clamp(34px, 5.2vw, 58px);
+  line-height: 1.02;
+  margin-bottom: 20px;
+}
+.vcs-accent { color: var(--coral); }
+.vcs-green { color: var(--green); }
+.vcs-hero p {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 480px;
+  margin: 0 0 32px;
+}
+.vcs-btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.vcs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 26px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: transform .15s ease, background .15s ease;
+}
+.vcs-btn:hover { transform: translateY(-1px); }
+.vcs-btn-primary { background: var(--coral); color: #fff; }
+.vcs-btn-primary:hover { background: #c14e28; }
+.vcs-btn-ghost { background: var(--card-2); color: var(--text); border: 1px solid var(--border); }
+.vcs-btn-ghost:hover { border-color: var(--coral); }
+
+/* BENEFICIOS */
+.vcs-benefits { padding: 56px 24px; border-bottom: 1px solid var(--border); }
+.vcs-benefits-grid {
+  max-width: 900px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.vcs-benefit {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.vcs-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(216,90,48,0.15);
+  color: var(--coral-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+.vcs-benefit h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.vcs-benefit p { font-size: 13px; color: var(--muted); }
+
+/* FORMULARIO */
+.vcs-form-section { padding: 72px 24px; }
+.vcs-form-grid {
+  max-width: 960px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+.vcs-form-copy .vcs-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dark);
+  background: var(--green);
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.vcs-form-copy h2.vcs-display { font-size: 30px; line-height: 1.08; margin-bottom: 14px; }
+.vcs-form-copy p { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+.vcs-form-copy ul { margin-top: 22px; list-style: none; padding: 0; }
+.vcs-form-copy li {
+  font-size: 14px;
+  color: var(--text);
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.vcs-form-copy li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--coral); flex: none; }
+
+.vcs-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+}
+.vcs-card label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+  margin-top: 18px;
+}
+.vcs-card label:first-of-type { margin-top: 0; }
+.vcs-card input, .vcs-card select {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  background: var(--card-2);
+  color: var(--text);
+  font-family: inherit;
+}
+.vcs-card input::placeholder { color: #5a5a55; }
+.vcs-card input:focus, .vcs-card select:focus { outline: 2px solid var(--coral); outline-offset: 1px; }
+
+.vcs-submit-btn {
+  width: 100%;
+  margin-top: 26px;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  padding: 15px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.vcs-submit-btn:hover { background: #c14e28; }
+.vcs-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.vcs-form-note { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; }
+.vcs-success { color: var(--green); }
+.vcs-error { color: var(--coral-light); }
+
+/* CIERRE */
+.vcs-closing { padding: 56px 24px; }
+.vcs-closing-inner {
+  max-width: 960px; margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.vcs-closing-text h2.vcs-display { font-size: 32px; line-height: 1.05; margin-bottom: 8px; }
+.vcs-closing-text p { color: var(--muted); font-size: 14px; max-width: 360px; }
+
+@media (max-width: 720px) {
+  .vcs-benefits-grid { grid-template-columns: 1fr; }
+  .vcs-form-grid { grid-template-columns: 1fr; }
+  .vcs-closing-inner { flex-direction: column; text-align: center; }
+  .vcs-closing-text p { margin: 0 auto; }
+}
