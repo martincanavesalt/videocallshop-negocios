@@ -21,9 +21,11 @@ const INTEGRACIONES = [
   "Mercado Pago",
   "Tiendanube",
   "Transferencia",
+  "Andreani",
   "Correo Argentino",
+  "OCA",
   "WhatsApp",
-  "Link integrable en ecommerce",
+  "Link de pago",
 ];
 
 const BENEFICIOS = [
@@ -146,6 +148,12 @@ export default function Landing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("sending");
+
+    if (!supabase) {
+      console.error("Supabase no está configurado (faltan las claves).");
+      setStatus("error");
+      return;
+    }
 
     const { error } = await supabase.from("leads").insert([{ ...form }]);
 
