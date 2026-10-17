@@ -1,28 +1,66 @@
-# VideoCallShop — Landing Negocios (con base de datos)
+# VideoCallShop — quierovendermas.com.ar
 
-App React que captura leads de negocios y los guarda en una base de datos
-gratuita (Supabase, Postgres).
+Landing de **VideoCallShop** (live shopping por videollamada) publicada en
+**https://quierovendermas.com.ar**. Hecha en React; el formulario guarda los
+leads en Supabase y avisa por mail.
 
 ## Estructura
+
 ```
-├── public/index.html
+├── .github/workflows/deploy.yml   ← publica sola en GitHub Pages en cada push
+├── public/
+│   ├── CNAME                      ← dominio propio (quierovendermas.com.ar)
+│   └── index.html
 ├── src/
 │   ├── components/
-│   │   ├── LandingNegocios.jsx
-│   │   └── LandingNegocios.css
+│   │   ├── Landing.jsx            ← toda la página (textos editables arriba de todo)
+│   │   └── Landing.css            ← estilos (colores en :root)
 │   ├── App.jsx
 │   ├── index.js
 │   └── supabaseClient.js
 ├── .env.example
-├── package.json
-└── .gitignore
+└── package.json
 ```
 
-## Paso 1 — Crear la base de datos gratis en Supabase
+## Editar textos rápido
 
-1. Entrá a [supabase.com](https://supabase.com) y creá una cuenta gratis.
-2. Creá un proyecto nuevo (el plan Free alcanza de sobra para esto).
-3. Una vez creado, andá a **SQL Editor** (menú izquierdo) y corré esto para crear la tabla de leads:
+Al principio de `src/components/Landing.jsx` están todas las constantes:
+`WHATSAPP_NUMBER`, `CONTACT_EMAIL`, `BENEFICIOS`, `PASOS`, `PERFILES`, `FAQS`
+e `INTEGRACIONES` (la cinta animada de medios de pago/envío — dejá solo las
+que realmente uses).
+
+Los colores se cambian en `src/components/Landing.css`, en el bloque `:root`.
+
+---
+
+## Paso 1 — Subir a GitHub
+
+1. Creá un repositorio nuevo en GitHub (ej: `quierovendermas`).
+2. Subí **todo el contenido de esta carpeta** (incluida la carpeta oculta `.github`):
+   ```bash
+   git init
+   git add .
+   git commit -m "Nueva web VideoCallShop"
+   git branch -M main
+   git remote add origin https://github.com/TU-USUARIO/quierovendermas.git
+   git push -u origin main
+   ```
+   > Si lo subís arrastrando archivos desde la web de GitHub, asegurate de que
+   > se suba también `.github/workflows/deploy.yml`.
+
+## Paso 2 — Cargar las claves de Supabase como "secrets"
+
+En el repo: **Settings → Secrets and variables → Actions → New repository secret**.
+Creá estos dos (los valores están en Supabase → Settings → API):
+
+| Nombre | Valor |
+|---|---|
+| `REACT_APP_SUPABASE_URL` | Project URL |
+| `REACT_APP_SUPABASE_ANON_KEY` | anon public key |
+
+⚠️ Nunca uses la clave `service_role`.
+
+Si todavía no tenés la tabla `leads`, corré esto en el **SQL Editor** de Supabase:
 
 ```sql
 create table leads (
@@ -33,58 +71,53 @@ create table leads (
   whatsapp text not null,
   created_at timestamp with time zone default now()
 );
-
--- Habilitar seguridad a nivel de fila
 alter table leads enable row level security;
-
--- Permitir que cualquiera pueda INSERTAR (enviar el formulario),
--- pero nadie pueda LEER los datos desde el navegador (eso protege los leads).
 create policy "Cualquiera puede insertar leads"
-  on leads for insert
-  to anon
-  with check (true);
+  on leads for insert to anon with check (true);
 ```
 
-4. Andá a **Settings → API**. Ahí vas a ver:
-   - **Project URL** → esto va en `REACT_APP_SUPABASE_URL`
-   - **anon public key** → esto va en `REACT_APP_SUPABASE_ANON_KEY`
+## Paso 3 — Activar GitHub Pages
 
-   ⚠️ Usá siempre la clave **anon public**, nunca la `service_role` (esa es secreta y no debe estar en el frontend).
+1. **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Andá a la pestaña **Actions**: vas a ver "Deploy a GitHub Pages" corriendo.
+   Cuando termina en verde, la web ya está publicada.
+3. En **Settings → Pages → Custom domain** escribí `quierovendermas.com.ar` y guardá.
+   Cuando el DNS esté listo (Paso 4), tildá **Enforce HTTPS**.
 
-## Paso 2 — Configurar el proyecto local
+Cada vez que hagas un cambio y un `git push`, la web se actualiza sola.
 
-1. Copiá `.env.example` como `.env` y completá con los dos valores de arriba.
-2. En `package.json`, reemplazá la línea `homepage` con tu usuario y el nombre real del repo:
-   ```json
-   "homepage": "https://TU-USUARIO.github.io/NOMBRE-DEL-REPO"
-   ```
-3. Instalá dependencias:
-   ```bash
-   npm install
-   ```
-4. Probá local:
-   ```bash
-   npm start
-   ```
+## Paso 4 — Apuntar el dominio .com.ar a GitHub
 
-## Paso 3 — Ver los leads que van llegando
+NIC Argentina no permite cargar registros DNS directamente: hay que **delegar**
+el dominio a un proveedor de DNS. La opción gratis más simple es **Cloudflare**.
 
-En Supabase, andá a **Table Editor → leads**. Ahí vas a ver cada envío del formulario en tiempo real, exportable a CSV cuando quieras.
+1. Creá una cuenta en [cloudflare.com](https://cloudflare.com) → *Add a site* →
+   `quierovendermas.com.ar` → plan Free. Cloudflare te da **2 nameservers**.
+2. En [nic.ar](https://nic.ar) → tu dominio → **Delegaciones** → borrá las que
+   haya y cargá los 2 nameservers de Cloudflare.
+3. En Cloudflare → **DNS → Records**, cargá:
 
-## Paso 4 — Publicar en GitHub Pages
+   | Tipo | Nombre | Valor | Proxy |
+   |---|---|---|---|
+   | A | `@` | `185.199.108.153` | DNS only (nube gris) |
+   | A | `@` | `185.199.109.153` | DNS only |
+   | A | `@` | `185.199.110.153` | DNS only |
+   | A | `@` | `185.199.111.153` | DNS only |
+   | CNAME | `www` | `TU-USUARIO.github.io` | DNS only |
 
-⚠️ Importante: como GitHub Pages es hosting estático, las variables de entorno se "hornean" dentro del build en tu compu — por eso el `.env` tiene que existir **antes** de correr `npm run deploy`.
+4. La propagación puede tardar de minutos a 24-48 h. Después volvé al Paso 3 y
+   activá **Enforce HTTPS**.
+
+## Probar en tu compu (opcional)
 
 ```bash
-npm run deploy
+cp .env.example .env     # y completá las dos claves
+npm install
+npm start
 ```
-
-Después, en GitHub → Settings → Pages, seleccioná la rama `gh-pages`, carpeta `/ (root)`.
 
 ## Notas de seguridad
 
-- El `.env` **no se sube al repo** (está en `.gitignore`) porque, aunque la clave `anon` está pensada para ser pública, no tiene sentido versionarla.
-- La política de Supabase que creamos permite *solo insertar*, no leer — así que aunque alguien vea la clave `anon` en el código del navegador (es visible, es normal), no puede consultar los leads de otros negocios.
-
-## WhatsApp
-Botón flotante y botón del hero apuntan a `+54 9 3341 5858527`. Para cambiarlo: constante `WHATSAPP_NUMBER` en `LandingNegocios.jsx`.
+- El `.env` no se sube al repo (está en `.gitignore`); en GitHub las claves van como *secrets*.
+- La política de Supabase permite solo **insertar**, no leer: nadie puede ver los leads desde el navegador.
+- Los leads se ven en Supabase → **Table Editor → leads** (exportable a CSV).

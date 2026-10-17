@@ -1,6 +1,6 @@
 import React from "react";
-import LandingNegocios from "./components/LandingNegocios";
+import Landing from "./components/Landing";
 
 export default function App() {
-  return <LandingNegocios />;
+  return <Landing />;
 }
