@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./Landing.css";
+import heroLive from "../assets/hero-live.jpg";
 
 /* =========================================================
    CONFIGURACIÓN RÁPIDA — editá estos valores
@@ -550,32 +551,11 @@ function HeroMockup() {
     <div className="qvm-mockup" aria-hidden="true">
       <div className="qvm-phone">
         <div className="qvm-phone-screen">
-          <div className="qvm-phone-top">
-            <span className="qvm-badge-live">● EN VIVO</span>
-            <span className="qvm-viewers">Atención 1 a 1</span>
-          </div>
-          <div className="qvm-seller">
-            <div className="qvm-seller-head" />
-            <div className="qvm-seller-body" />
-            <div className="qvm-product-hanger">
-              <div className="qvm-product-shirt" />
-            </div>
-          </div>
-          <div className="qvm-pip">
-            <div className="qvm-pip-face" />
-          </div>
-          <div className="qvm-chat">
-            <div className="qvm-bubble">¿Lo tenés en talle M? 😍</div>
-            <div className="qvm-bubble qvm-bubble-me">¡Sí! Te lo muestro 👇</div>
-          </div>
-          <div className="qvm-buy-card">
-            <div className="qvm-buy-thumb" />
-            <div className="qvm-buy-info">
-              <strong>Camisa lino</strong>
-              <small>Talle M · Arena</small>
-            </div>
-            <span className="qvm-buy-btn">Pagar</span>
-          </div>
+          <img
+            className="qvm-phone-img"
+            src={heroLive}
+            alt="Venta en vivo por videollamada con VideoCallShop"
+          />
         </div>
       </div>
 
@@ -583,7 +563,7 @@ function HeroMockup() {
         <Icon name="check" /> <span>Venta cerrada</span>
       </div>
       <div className="qvm-float qvm-float-2">
-        <Icon name="truck" /> <span>Envío en 48 h</span>
+        <Icon name="truck" /> <span>Envíos integrados</span>
       </div>
       <div className="qvm-float qvm-float-3">
         <Icon name="card" /> <span>Checkout elegido</span>

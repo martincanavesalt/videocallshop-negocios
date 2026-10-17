@@ -299,6 +299,13 @@ body {
   overflow: hidden;
   background: linear-gradient(170deg, #f8e7d8 0%, #f1cdb6 55%, #d9a98e 100%);
 }
+.qvm-phone-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
 .qvm-phone-top {
   position: absolute;
   top: 18px;
@@ -480,7 +487,7 @@ body {
   animation-delay: 1.2s;
 }
 .qvm-float-3 {
-  bottom: -8px;
+  top: 360px;
   left: 0;
   animation-delay: 2.4s;
 }
