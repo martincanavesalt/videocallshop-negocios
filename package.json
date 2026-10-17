@@ -2,7 +2,7 @@
   "name": "quierovendermas",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://quierovendermas.com.ar",
+  "homepage": ".",
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
     "react": "^18.2.0",
