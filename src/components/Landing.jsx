@@ -2,14 +2,19 @@ import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./Landing.css";
 import heroLive from "../assets/hero-live.jpg";
+import logo from "../assets/logo.png";
 
 /* =========================================================
    CONFIGURACIÓN RÁPIDA — editá estos valores
    ========================================================= */
 const BRAND = "VideoCallShop";
 const DOMAIN = "quierovendermas.com.ar";
-const WHATSAPP_NUMBER = "54933415858527"; // solo dígitos, formato internacional sin "+"
-const WHATSAPP_MESSAGE = "Hola! Quiero vender más con VideoCallShop.";
+const WHATSAPP_NUMBER = "5493415858527"; // 341 585 8527 — solo dígitos, formato internacional sin "+"
+const PHONE_DISPLAY = "341 585 8527";
+const INSTAGRAM = "VideoCallShop.ok";
+const WEB = "videocallshop.com";
+const LEMA = "Comprá con alguien que te asesore.";
+const WHATSAPP_MESSAGE = "¡Hola! Quiero sumar VideoCallShop a mi negocio.";
 const CONTACT_EMAIL = "videocallshoppping@gmail.com";
 
 // Mail de aviso: se dispara además del guardado en Supabase, solo para notificar.
@@ -57,8 +62,8 @@ const BENEFICIOS = [
   },
   {
     icon: "bolt",
-    title: "Sin costos fijos",
-    text: "Empezás con lo que ya tenés: tu celular, tu stock y tu local. Sin invertir en estructura ni personal extra.",
+    title: "Empezá con lo que tenés",
+    text: "Tu celular, tu stock y tu local alcanzan para arrancar. Sumá un canal de atención por video a tu negocio.",
   },
 ];
 
@@ -192,9 +197,9 @@ export default function Landing() {
       {/* ================= NAV ================= */}
       <header className="qvm-nav">
         <div className="qvm-container qvm-nav-inner">
-          <a href="#top" className="qvm-logo" onClick={closeMenu}>
-            <span className="qvm-logo-dot" aria-hidden="true" />
-            <span>Video<b>Call</b>Shop</span>
+          <a href="#top" className="qvm-logo" onClick={closeMenu} aria-label="VideoCallShop, inicio">
+            <img src={logo} alt="" className="qvm-logo-img" />
+            <span>VideoCallShop</span>
           </a>
 
           <button
@@ -214,7 +219,7 @@ export default function Landing() {
             <a href="#soluciones" onClick={closeMenu}>Soluciones</a>
             <a href="#faq" onClick={closeMenu}>Preguntas</a>
             <a href="#contacto" className="qvm-btn qvm-btn-primary qvm-btn-sm" onClick={closeMenu}>
-              Solicitar demo
+              Sumá tu comercio
             </a>
           </nav>
         </div>
@@ -226,20 +231,20 @@ export default function Landing() {
         <div className="qvm-container qvm-hero-grid">
           <div className="qvm-hero-copy">
             <span className="qvm-pill">
-              <span className="qvm-live-dot" /> Live Shopping por videollamada
+              <span className="qvm-live-dot" /> Live Shopping
             </span>
             <h1>
               Vendé en vivo.
               <br />
-              <span className="qvm-gradient-text">Vendé más.</span>
+              <span className="qvm-accent">Vendé más.</span>
             </h1>
             <p className="qvm-lead">
-              Experiencias de compra por videollamada que inspiran, conectan y convierten.
-              Ofrecé un diferencial a tus clientes vendiendo con atención personalizada.
+              Mostrá tus productos y asesorá a tus clientes por videollamada. Ofrecé un
+              diferencial a tus clientes vendiendo con atención personalizada.
             </p>
             <div className="qvm-btn-row">
               <a href="#contacto" className="qvm-btn qvm-btn-primary">
-                Quiero vender más →
+                Sumá tu comercio →
               </a>
               <a
                 href={whatsappHref}
@@ -279,7 +284,7 @@ export default function Landing() {
           <div className="qvm-section-head">
             <span className="qvm-eyebrow">Por qué vender en vivo</span>
             <h2>
-              Potenciá tus ventas con <span className="qvm-gradient-text">{BRAND}</span>
+              Potenciá tus ventas con <span className="qvm-accent-blue">{BRAND}</span>
             </h2>
             <p>
               Llevá la experiencia de tu local a la pantalla de tus clientes. Mostrás,
@@ -346,7 +351,7 @@ export default function Landing() {
           <div className="qvm-plans">
             {PERFILES.map((p) => (
               <article className={`qvm-plan ${p.featured ? "is-featured" : ""}`} key={p.tag}>
-                {p.featured && <span className="qvm-plan-badge">Más elegido</span>}
+                {p.featured && <span className="qvm-plan-badge">Recomendado</span>}
                 <span className="qvm-plan-tag">{p.tag}</span>
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
@@ -481,13 +486,13 @@ export default function Landing() {
       <section className="qvm-cta">
         <div className="qvm-container qvm-cta-inner">
           <h2>
-            Tu local ya tiene el producto y la confianza.
+            Vendé desde tu local.
             <br />
-            <span>Llevalo a la pantalla de tus clientes.</span>
+            <span>Videollamadas y vivos en una sola app.</span>
           </h2>
           <div className="qvm-btn-row qvm-btn-row-center">
             <a href="#contacto" className="qvm-btn qvm-btn-light">
-              Empezar ahora →
+              Sumá tu comercio →
             </a>
             <a
               href={whatsappHref}
@@ -505,11 +510,15 @@ export default function Landing() {
       <footer className="qvm-footer">
         <div className="qvm-container qvm-footer-grid">
           <div>
-            <a href="#top" className="qvm-logo qvm-logo-light">
-              <span className="qvm-logo-dot" aria-hidden="true" />
-              <span>Video<b>Call</b>Shop</span>
+            <a href="#top" className="qvm-logo qvm-logo-light" aria-label="VideoCallShop, inicio">
+              <img src={logo} alt="" className="qvm-logo-img" />
+              <span>VideoCallShop</span>
             </a>
-            <p className="qvm-footer-tag">Live shopping por videollamada para negocios argentinos.</p>
+            <p className="qvm-footer-lema">{LEMA}</p>
+            <p className="qvm-footer-tag">
+              Conectamos compradores y comercios por videollamada para ver productos y recibir
+              asesoramiento en tiempo real. Hecho en Rosario.
+            </p>
           </div>
           <div>
             <h4>Soluciones</h4>
@@ -519,10 +528,16 @@ export default function Landing() {
           </div>
           <div>
             <h4>Contacto</h4>
-            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
             <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
-              WhatsApp
+              {PHONE_DISPLAY}
             </a>
+            <a href={`https://instagram.com/${INSTAGRAM}`} target="_blank" rel="noopener noreferrer">
+              @{INSTAGRAM}
+            </a>
+            <a href={`https://${WEB}`} target="_blank" rel="noopener noreferrer">
+              {WEB}
+            </a>
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
             <a href="#contacto">Solicitá una demo</a>
           </div>
         </div>

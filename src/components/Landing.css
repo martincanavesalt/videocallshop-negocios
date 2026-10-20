@@ -1,20 +1,26 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
 
+/* =========================================================
+   Paleta del Manual de Marca VideoCallShop v1.0
+   Azul principal #1D98E7 · Verde turquesa #29D2AB
+   Azul Noche #0F1B2D · Nube #F2F7FB
+   ========================================================= */
 :root {
-  --ink: #160f2e;
-  --ink-soft: #4b4466;
-  --muted: #7a7393;
-  --bg: #ffffff;
-  --tint: #f5f2ff;
-  --line: #e6e1f5;
-  --violet: #6b2cf5;
-  --violet-dark: #4a14c9;
-  --pink: #ff3d8b;
-  --lime: #c6ff3d;
-  --green: #25d366;
+  --blue: #1d98e7;
+  --blue-dark: #0f6fb0; /* azul para texto chico sobre blanco (contraste AA) */
+  --green: #29d2ab;
+  --green-dark: #128a6f;
+  --night: #0f1b2d;
+  --night-2: #172a44;
+  --cloud: #f2f7fb;
+  --white: #ffffff;
+  --text: #0f1b2d;
+  --text-soft: #43536b;
+  --muted: #6b7a90;
+  --line: #dde7f1;
   --radius: 20px;
-  --shadow: 0 20px 50px -20px rgba(70, 30, 160, 0.35);
-  --grad: linear-gradient(100deg, var(--violet) 0%, var(--pink) 100%);
+  --shadow: 0 22px 50px -24px rgba(15, 27, 45, 0.45);
+  --grad: linear-gradient(120deg, var(--blue) 0%, var(--green) 100%);
 }
 
 * {
@@ -28,23 +34,25 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--white);
 }
 
 .qvm {
-  font-family: "DM Sans", system-ui, sans-serif;
-  color: var(--ink);
-  background: var(--bg);
-  line-height: 1.55;
+  font-family: "Poppins", Arial, sans-serif;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--white);
+  line-height: 1.6;
   overflow-x: hidden;
 }
 
 .qvm h1,
 .qvm h2,
 .qvm h3 {
-  font-family: "Bricolage Grotesque", "DM Sans", sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
+  font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.08;
+  line-height: 1.12;
   margin: 0;
 }
 
@@ -55,71 +63,79 @@ body {
   padding: 0 24px;
 }
 
-.qvm-gradient-text {
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.qvm-accent {
+  color: var(--green);
+}
+.qvm-accent-blue {
+  color: var(--blue);
 }
 
-/* ---------- Buttons ---------- */
+/* ---------- Botones ---------- */
 .qvm-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 26px;
+  padding: 14px 28px;
   border-radius: 999px;
-  font-weight: 700;
+  font-family: inherit;
+  font-weight: 600;
   font-size: 16px;
   text-decoration: none;
   border: 2px solid transparent;
   cursor: pointer;
-  font-family: inherit;
   transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .qvm-btn:hover {
   transform: translateY(-2px);
+}
+.qvm-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
 }
 .qvm-btn:disabled {
   opacity: 0.6;
   cursor: wait;
   transform: none;
 }
+/* Verde con texto Azul Noche: el par de mayor contraste de la marca */
 .qvm-btn-primary {
-  background: var(--grad);
-  color: #fff;
-  box-shadow: 0 10px 25px -10px rgba(107, 44, 245, 0.8);
+  background: var(--green);
+  color: var(--night);
+  box-shadow: 0 12px 26px -12px rgba(41, 210, 171, 0.9);
+}
+.qvm-btn-primary:hover {
+  background: #3ee0bb;
 }
 .qvm-btn-ghost {
-  background: #fff;
-  color: var(--ink);
-  border-color: var(--line);
+  background: transparent;
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 .qvm-btn-ghost svg {
   color: var(--green);
 }
 .qvm-btn-outline {
   background: transparent;
-  color: var(--violet);
-  border-color: var(--violet);
+  color: var(--night);
+  border-color: var(--night);
 }
 .qvm-btn-light {
-  background: #fff;
-  color: var(--violet-dark);
+  background: var(--white);
+  color: var(--night);
 }
 .qvm-btn-ghost-light {
   background: transparent;
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 .qvm-btn-sm {
-  padding: 10px 20px;
+  padding: 10px 22px;
   font-size: 15px;
 }
 .qvm-btn-block {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 .qvm-btn-row {
   display: flex;
@@ -130,63 +146,50 @@ body {
   justify-content: center;
 }
 
-/* ---------- Nav ---------- */
+/* ---------- Nav (Azul Noche) ---------- */
 .qvm-nav {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(15, 27, 45, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .qvm-nav-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 70px;
+  height: 72px;
 }
 .qvm-logo {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 600;
-  font-size: 22px;
-  color: var(--ink);
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--white);
   text-decoration: none;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
-.qvm-logo b {
-  font-weight: 800;
-  color: var(--violet);
-}
-.qvm-logo-light {
-  color: #fff;
-}
-.qvm-logo-light b {
-  color: var(--lime);
-}
-.qvm-logo-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--pink);
-  box-shadow: 0 0 0 4px rgba(255, 61, 139, 0.2);
-  animation: qvm-pulse 1.8s infinite;
+.qvm-logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
 }
 .qvm-links {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 30px;
 }
 .qvm-links a:not(.qvm-btn) {
-  color: var(--ink-soft);
+  color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
   font-weight: 500;
+  font-size: 15px;
 }
 .qvm-links a:not(.qvm-btn):hover {
-  color: var(--violet);
+  color: var(--green);
 }
 .qvm-burger {
   display: none;
@@ -199,29 +202,46 @@ body {
   display: block;
   width: 24px;
   height: 2px;
-  background: var(--ink);
+  background: var(--white);
   margin: 5px 0;
   border-radius: 2px;
 }
 
-/* ---------- Hero ---------- */
+/* ---------- Hero (Azul Noche + círculos de marca) ---------- */
 .qvm-hero {
   position: relative;
-  padding: 80px 0 90px;
+  padding: 84px 0 96px;
   overflow: hidden;
+  background: var(--night);
+  color: var(--white);
+}
+.qvm-hero::before,
+.qvm-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.qvm-hero::before {
+  width: 560px;
+  height: 560px;
+  background: var(--blue);
+  top: -300px;
+  right: -180px;
+}
+.qvm-hero::after {
+  width: 420px;
+  height: 420px;
+  background: var(--green);
+  bottom: -300px;
+  right: 18%;
 }
 .qvm-hero-glow {
-  position: absolute;
-  inset: -20% -10% auto auto;
-  width: 720px;
-  height: 720px;
-  background: radial-gradient(circle, rgba(255, 61, 139, 0.25), transparent 60%),
-    radial-gradient(circle at 30% 60%, rgba(107, 44, 245, 0.25), transparent 60%);
-  filter: blur(20px);
-  pointer-events: none;
+  display: none;
 }
 .qvm-hero-grid {
   position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 48px;
@@ -231,31 +251,31 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 7px 16px;
   border-radius: 999px;
-  background: var(--tint);
-  color: var(--violet-dark);
-  font-weight: 700;
+  background: var(--green);
+  color: var(--night);
+  font-weight: 600;
   font-size: 14px;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 .qvm-live-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--pink);
+  background: var(--night);
   animation: qvm-pulse 1.4s infinite;
 }
 .qvm-hero h1 {
-  font-size: clamp(44px, 7vw, 84px);
-  font-weight: 800;
+  font-size: clamp(42px, 6.6vw, 78px);
+  font-weight: 700;
   margin-bottom: 22px;
 }
 .qvm-lead {
-  font-size: 19px;
-  color: var(--ink-soft);
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
   max-width: 540px;
-  margin: 0 0 30px;
+  margin: 0 0 32px;
 }
 .qvm-hero-checks {
   list-style: none;
@@ -264,18 +284,18 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px 22px;
-  color: var(--ink-soft);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 500;
   font-size: 15px;
 }
 .qvm-hero-checks li::before {
   content: "✓";
-  color: var(--violet);
-  font-weight: 800;
+  color: var(--green);
+  font-weight: 700;
   margin-right: 6px;
 }
 
-/* ---------- Mockup ---------- */
+/* ---------- Mockup del celular ---------- */
 .qvm-mockup {
   position: relative;
   display: flex;
@@ -286,9 +306,9 @@ body {
   width: 290px;
   height: 580px;
   border-radius: 44px;
-  background: #0d0820;
+  background: #050b14;
   padding: 12px;
-  box-shadow: var(--shadow), 0 0 0 2px #2a2245 inset;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6), 0 0 0 2px #22344f inset;
   transform: rotate(3deg);
 }
 .qvm-phone-screen {
@@ -297,7 +317,7 @@ body {
   height: 100%;
   border-radius: 34px;
   overflow: hidden;
-  background: linear-gradient(170deg, #f8e7d8 0%, #f1cdb6 55%, #d9a98e 100%);
+  background: var(--night-2);
 }
 .qvm-phone-img {
   display: block;
@@ -306,174 +326,22 @@ body {
   object-fit: cover;
   object-position: center top;
 }
-.qvm-phone-top {
-  position: absolute;
-  top: 18px;
-  left: 16px;
-  right: 16px;
-  display: flex;
-  justify-content: space-between;
-  z-index: 2;
-}
-.qvm-badge-live {
-  background: var(--pink);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 6px;
-  letter-spacing: 0.04em;
-}
-.qvm-viewers {
-  background: rgba(0, 0, 0, 0.35);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-.qvm-seller {
-  position: absolute;
-  inset: 0;
-}
-.qvm-seller-head {
-  position: absolute;
-  top: 110px;
-  left: 50%;
-  width: 92px;
-  height: 104px;
-  transform: translateX(-60%);
-  border-radius: 46px 46px 42px 42px;
-  background: #b97a5b;
-  box-shadow: inset 0 22px 0 #3b2418;
-}
-.qvm-seller-body {
-  position: absolute;
-  top: 200px;
-  left: 50%;
-  width: 210px;
-  height: 260px;
-  transform: translateX(-60%);
-  border-radius: 100px 100px 0 0;
-  background: var(--violet);
-}
-.qvm-product-hanger {
-  position: absolute;
-  top: 210px;
-  right: 22px;
-  width: 104px;
-  height: 130px;
-  border-top: 3px solid #5c5c5c;
-  border-radius: 50% 50% 0 0 / 30% 30% 0 0;
-  transform: rotate(-8deg);
-}
-.qvm-product-shirt {
-  margin: 6px auto 0;
-  width: 96px;
-  height: 118px;
-  background: #e9dcc4;
-  border-radius: 18px 18px 8px 8px;
-  box-shadow: inset 0 0 0 2px #d6c5a6;
-}
-.qvm-pip {
-  position: absolute;
-  top: 56px;
-  right: 16px;
-  width: 64px;
-  height: 86px;
-  border-radius: 14px;
-  background: #3c3360;
-  border: 2px solid #fff;
-  overflow: hidden;
-  z-index: 2;
-}
-.qvm-pip-face {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #f3c9a1;
-  margin: 18px auto 0;
-  box-shadow: 0 34px 0 10px #ff8fb8;
-}
-.qvm-chat {
-  position: absolute;
-  left: 14px;
-  bottom: 104px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 2;
-}
-.qvm-bubble {
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 7px 12px;
-  border-radius: 14px 14px 14px 4px;
-  max-width: 190px;
-  animation: qvm-rise 0.6s ease both;
-}
-.qvm-bubble-me {
-  background: var(--violet);
-  color: #fff;
-  border-radius: 14px 14px 4px 14px;
-  animation-delay: 0.8s;
-}
-.qvm-buy-card {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 10px;
-  z-index: 2;
-  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.3);
-}
-.qvm-buy-thumb {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: #e9dcc4;
-}
-.qvm-buy-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  font-size: 13px;
-  line-height: 1.3;
-}
-.qvm-buy-info small {
-  color: var(--muted);
-}
-.qvm-buy-btn {
-  background: var(--grad);
-  color: #fff;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 8px 14px;
-  border-radius: 999px;
-}
 .qvm-float {
   position: absolute;
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
-  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--night);
   border-radius: 14px;
   padding: 12px 16px;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   box-shadow: var(--shadow);
   animation: qvm-float 5s ease-in-out infinite;
 }
 .qvm-float svg {
-  color: var(--violet);
+  color: var(--blue);
   width: 22px;
   height: 22px;
 }
@@ -486,25 +354,27 @@ body {
   right: -6px;
   animation-delay: 1.2s;
 }
+.qvm-float-2 svg {
+  color: var(--green-dark);
+}
 .qvm-float-3 {
   top: 360px;
   left: 0;
   animation-delay: 2.4s;
 }
 
-/* ---------- Marquee ---------- */
+/* ---------- Cinta de integraciones ---------- */
 .qvm-marquee {
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 26px 0;
+  background: var(--cloud);
+  padding: 28px 0;
   overflow: hidden;
 }
 .qvm-marquee-title {
   text-align: center;
   margin: 0 0 16px;
-  color: var(--muted);
+  color: var(--text-soft);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -515,19 +385,18 @@ body {
   animation: qvm-marquee 30s linear infinite;
 }
 .qvm-marquee-item {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 800;
-  font-size: 26px;
-  color: #c4bcdc;
+  font-weight: 700;
+  font-size: 24px;
+  color: #a9bacd;
   white-space: nowrap;
 }
 
-/* ---------- Sections ---------- */
+/* ---------- Secciones ---------- */
 .qvm-section {
   padding: 100px 0;
 }
 .qvm-section-tint {
-  background: var(--tint);
+  background: var(--cloud);
 }
 .qvm-section-head {
   text-align: center;
@@ -536,45 +405,75 @@ body {
 }
 .qvm-section-head h2,
 .qvm-form-copy h2 {
-  font-size: clamp(32px, 4.5vw, 52px);
-  font-weight: 800;
+  font-size: clamp(30px, 4.2vw, 46px);
   margin-bottom: 16px;
 }
 .qvm-section-head p {
-  color: var(--ink-soft);
+  color: var(--text-soft);
   font-size: 18px;
   margin: 0;
 }
+/* Rótulo de sección con la barrita verde del manual */
 .qvm-eyebrow {
-  display: inline-block;
-  color: var(--violet);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--blue-dark);
   font-weight: 700;
   font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   margin-bottom: 14px;
 }
+.qvm-eyebrow::before {
+  content: "";
+  width: 40px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--green);
+}
+.qvm-form-copy .qvm-eyebrow {
+  align-items: flex-start;
+}
 .qvm-eyebrow-light {
-  color: var(--lime);
+  color: var(--green);
+  align-items: flex-start;
+}
+.qvm-eyebrow-light::before {
+  background: var(--blue);
 }
 
-/* ---------- Features ---------- */
+/* ---------- Beneficios ---------- */
 .qvm-feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 22px;
 }
 .qvm-feature {
-  background: #fff;
+  position: relative;
+  background: var(--white);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 30px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  padding: 32px 30px 30px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.qvm-feature::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 30px;
+  width: 44px;
+  height: 4px;
+  border-radius: 0 0 4px 4px;
+  background: var(--blue);
+}
+.qvm-feature:nth-child(even)::before {
+  background: var(--green);
 }
 .qvm-feature:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow);
-  border-color: transparent;
 }
 .qvm-feature-icon {
   width: 52px;
@@ -582,82 +481,97 @@ body {
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: var(--tint);
-  color: var(--violet);
+  background: rgba(29, 152, 231, 0.12);
+  color: var(--blue);
   margin-bottom: 20px;
 }
-.qvm-feature:nth-child(3n + 2) .qvm-feature-icon {
-  background: #ffe8f1;
-  color: var(--pink);
+.qvm-feature:nth-child(even) .qvm-feature-icon {
+  background: rgba(41, 210, 171, 0.16);
+  color: var(--green-dark);
 }
 .qvm-feature h3 {
-  font-size: 22px;
+  font-size: 20px;
   margin-bottom: 10px;
 }
 .qvm-feature p {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--text-soft);
+  font-size: 15px;
 }
 
-/* ---------- World band ---------- */
+/* ---------- Banda mundial ---------- */
 .qvm-world {
-  background: var(--ink);
-  color: #fff;
-  padding: 80px 0;
-  background-image: radial-gradient(circle at 85% 20%, rgba(107, 44, 245, 0.55), transparent 45%),
-    radial-gradient(circle at 10% 90%, rgba(255, 61, 139, 0.35), transparent 40%);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, var(--night) 0%, var(--night-2) 100%);
+  color: var(--white);
+  padding: 84px 0;
+}
+.qvm-world::after {
+  content: "";
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: var(--blue);
+  opacity: 0.9;
+  right: -140px;
+  top: -140px;
 }
 .qvm-world-inner {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
   align-items: center;
 }
 .qvm-world h2 {
-  font-size: clamp(30px, 4vw, 46px);
-  font-weight: 800;
+  font-size: clamp(28px, 3.8vw, 42px);
 }
 .qvm-world p {
   margin: 0;
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.78);
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-/* ---------- Steps ---------- */
+/* ---------- Pasos ---------- */
 .qvm-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 22px;
-  counter-reset: step;
 }
 .qvm-step {
-  position: relative;
   padding: 34px 30px;
   border-radius: var(--radius);
-  background: var(--tint);
+  background: var(--cloud);
 }
 .qvm-step-n {
-  display: inline-block;
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 800;
-  font-size: 48px;
-  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 16px;
   margin-bottom: 18px;
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+}
+.qvm-step:nth-child(2) .qvm-step-n {
+  background: var(--green);
+  color: var(--night);
 }
 .qvm-step h3 {
-  font-size: 22px;
+  font-size: 20px;
   margin-bottom: 8px;
 }
 .qvm-step p {
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--text-soft);
 }
 
-/* ---------- Plans ---------- */
+/* ---------- Soluciones ---------- */
 .qvm-plans {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -668,40 +582,52 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--white);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 34px 30px;
 }
 .qvm-plan.is-featured {
-  border: 2px solid var(--violet);
+  background: var(--night);
+  color: var(--white);
+  border-color: var(--night);
   box-shadow: var(--shadow);
   transform: translateY(-10px);
+}
+.qvm-plan.is-featured > p,
+.qvm-plan.is-featured li {
+  color: rgba(255, 255, 255, 0.82);
+}
+.qvm-plan.is-featured li {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.qvm-plan.is-featured .qvm-plan-tag {
+  color: var(--green);
 }
 .qvm-plan-badge {
   position: absolute;
   top: -14px;
   left: 30px;
-  background: var(--grad);
-  color: #fff;
+  background: var(--green);
+  color: var(--night);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 5px 12px;
   border-radius: 999px;
 }
 .qvm-plan-tag {
-  font-weight: 800;
+  font-weight: 700;
   font-size: 13px;
-  letter-spacing: 0.14em;
-  color: var(--violet);
+  letter-spacing: 0.12em;
+  color: var(--blue-dark);
   margin-bottom: 10px;
 }
 .qvm-plan h3 {
-  font-size: 28px;
+  font-size: 26px;
   margin-bottom: 10px;
 }
 .qvm-plan > p {
-  color: var(--ink-soft);
+  color: var(--text-soft);
   margin: 0 0 20px;
 }
 .qvm-plan ul {
@@ -714,15 +640,19 @@ body {
   padding: 9px 0;
   border-top: 1px solid var(--line);
   font-weight: 500;
+  font-size: 15px;
 }
 .qvm-plan li::before {
   content: "✓";
-  color: var(--violet);
-  font-weight: 800;
+  color: var(--green-dark);
+  font-weight: 700;
   margin-right: 10px;
 }
+.qvm-plan.is-featured li::before {
+  color: var(--green);
+}
 
-/* ---------- Form ---------- */
+/* ---------- Formulario ---------- */
 .qvm-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -730,8 +660,8 @@ body {
   align-items: center;
 }
 .qvm-form-copy p {
-  font-size: 18px;
-  color: var(--ink-soft);
+  font-size: 17px;
+  color: var(--text-soft);
 }
 .qvm-checklist {
   list-style: none;
@@ -741,7 +671,7 @@ body {
 .qvm-checklist li {
   display: flex;
   gap: 12px;
-  padding: 10px 0;
+  padding: 9px 0;
   font-weight: 500;
 }
 .qvm-checklist li::before {
@@ -751,14 +681,14 @@ body {
   place-items: center;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  background: var(--grad);
-  color: #fff;
+  border-radius: 7px;
+  border: 2px solid var(--green);
+  color: var(--green-dark);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
 }
 .qvm-card {
-  background: #fff;
+  background: var(--white);
   border: 1px solid var(--line);
   border-radius: 24px;
   padding: 36px;
@@ -767,11 +697,11 @@ body {
   flex-direction: column;
 }
 .qvm-card h3 {
-  font-size: 26px;
-  margin-bottom: 18px;
+  font-size: 24px;
+  margin-bottom: 16px;
 }
 .qvm-card label {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   margin: 12px 0 6px;
 }
@@ -782,37 +712,38 @@ body {
   padding: 13px 14px;
   border: 1.5px solid var(--line);
   border-radius: 12px;
-  background: #fbfaff;
-  color: var(--ink);
+  background: var(--cloud);
+  color: var(--text);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .qvm-card input:focus,
 .qvm-card select:focus {
   outline: none;
-  border-color: var(--violet);
-  box-shadow: 0 0 0 4px rgba(107, 44, 245, 0.15);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(29, 152, 231, 0.18);
 }
 .qvm-form-note {
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 300;
   color: var(--muted);
   margin: 14px 0 0;
 }
 .qvm-form-note.is-success {
-  color: #12924a;
-  font-weight: 700;
+  color: var(--green-dark);
+  font-weight: 600;
 }
 .qvm-form-note.is-error {
-  color: #d1264b;
-  font-weight: 700;
+  color: #c62f3d;
+  font-weight: 600;
 }
 
-/* ---------- FAQ ---------- */
+/* ---------- Preguntas ---------- */
 .qvm-faq-wrap {
   max-width: 820px;
 }
 .qvm-faq-item {
-  background: #fff;
+  background: var(--white);
   border-radius: 16px;
   margin-bottom: 12px;
   border: 1px solid var(--line);
@@ -828,20 +759,29 @@ body {
   border: 0;
   padding: 22px 24px;
   font-family: inherit;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
   text-align: left;
   cursor: pointer;
 }
 .qvm-faq-sign {
   flex: none;
-  font-size: 26px;
-  color: var(--violet);
-  transition: transform 0.25s ease;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.25s ease, background 0.25s ease;
 }
 .qvm-faq-item.is-open .qvm-faq-sign {
   transform: rotate(45deg);
+  background: var(--green);
+  color: var(--night);
 }
 .qvm-faq-a {
   display: grid;
@@ -855,31 +795,58 @@ body {
   overflow: hidden;
   margin: 0;
   padding: 0 24px;
-  color: var(--ink-soft);
+  color: var(--text-soft);
 }
 .qvm-faq-item.is-open .qvm-faq-a p {
   padding-bottom: 22px;
 }
 
-/* ---------- CTA ---------- */
+/* ---------- CTA final (banner del manual) ---------- */
 .qvm-cta {
-  background: var(--grad);
-  color: #fff;
-  padding: 90px 0;
+  padding: 0 0 100px;
+}
+.qvm-cta-inner {
+  position: relative;
+  overflow: hidden;
+  max-width: 1132px;
+  background: linear-gradient(120deg, var(--night) 0%, #16365a 100%);
+  color: var(--white);
+  border-radius: 28px;
+  padding: 64px 40px;
   text-align: center;
 }
+.qvm-cta-inner::before {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: var(--green);
+  left: -110px;
+  bottom: -130px;
+}
+.qvm-cta-inner > * {
+  position: relative;
+}
 .qvm-cta h2 {
-  font-size: clamp(30px, 4.5vw, 52px);
-  font-weight: 800;
+  font-size: clamp(28px, 4vw, 44px);
   margin-bottom: 32px;
 }
 .qvm-cta h2 span {
-  opacity: 0.85;
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.55em;
+  font-weight: 500;
+  color: var(--green);
+  letter-spacing: 0;
+}
+.qvm-cta .qvm-btn-light {
+  background: var(--green);
 }
 
 /* ---------- Footer ---------- */
 .qvm-footer {
-  background: var(--ink);
+  background: var(--night);
   color: rgba(255, 255, 255, 0.7);
   padding: 64px 0 28px;
 }
@@ -888,33 +855,43 @@ body {
   grid-template-columns: 2fr 1fr 1fr;
   gap: 40px;
 }
+.qvm-footer-lema {
+  margin: 18px 0 8px;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--green);
+}
 .qvm-footer-tag {
-  margin: 14px 0 0;
-  max-width: 320px;
+  margin: 0;
+  max-width: 360px;
+  font-size: 14px;
 }
 .qvm-footer h4 {
-  color: #fff;
+  color: var(--white);
   margin: 0 0 14px;
   font-size: 15px;
+  font-weight: 600;
 }
 .qvm-footer-grid a:not(.qvm-logo) {
   display: block;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.72);
   text-decoration: none;
   padding: 4px 0;
+  font-size: 15px;
   word-break: break-word;
 }
 .qvm-footer-grid a:not(.qvm-logo):hover {
-  color: var(--lime);
+  color: var(--green);
 }
 .qvm-footer-bottom {
   margin-top: 48px;
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  font-weight: 300;
 }
 
-/* ---------- WhatsApp float ---------- */
+/* ---------- WhatsApp flotante ---------- */
 .qvm-whatsapp-float {
   position: fixed;
   right: 20px;
@@ -925,7 +902,7 @@ body {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: var(--green);
+  background: #25d366;
   color: #fff;
   box-shadow: 0 12px 28px -8px rgba(37, 211, 102, 0.7);
   transition: transform 0.2s ease;
@@ -934,14 +911,14 @@ body {
   transform: scale(1.08);
 }
 
-/* ---------- Animations ---------- */
+/* ---------- Animaciones ---------- */
 @keyframes qvm-pulse {
   0%,
   100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.4;
+    opacity: 0.35;
   }
 }
 @keyframes qvm-float {
@@ -951,16 +928,6 @@ body {
   }
   50% {
     transform: translateY(-10px);
-  }
-}
-@keyframes qvm-rise {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
   }
 }
 @keyframes qvm-marquee {
@@ -984,7 +951,17 @@ body {
     grid-template-columns: 1fr;
   }
   .qvm-hero {
-    padding: 56px 0 64px;
+    padding: 56px 0 72px;
+  }
+  .qvm-hero::before {
+    width: 380px;
+    height: 380px;
+    top: -220px;
+    right: -160px;
+  }
+  .qvm-hero::after {
+    right: -120px;
+    bottom: -260px;
   }
   .qvm-feature-grid,
   .qvm-plans {
@@ -1007,14 +984,14 @@ body {
   }
   .qvm-links {
     position: absolute;
-    top: 70px;
+    top: 72px;
     left: 0;
     right: 0;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    background: #fff;
-    border-bottom: 1px solid var(--line);
+    background: var(--night);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding: 8px 16px 20px;
     display: none;
   }
@@ -1023,7 +1000,7 @@ body {
   }
   .qvm-links a:not(.qvm-btn) {
     padding: 14px 4px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
   .qvm-links .qvm-btn {
     margin-top: 14px;
@@ -1057,5 +1034,19 @@ body {
   }
   .qvm-btn-row .qvm-btn {
     flex: 1 1 100%;
+  }
+  .qvm-cta {
+    padding: 0 0 72px;
+  }
+  .qvm-cta-inner {
+    margin: 0 16px;
+    width: auto;
+    padding: 48px 22px;
+  }
+  .qvm-logo {
+    font-size: 19px;
+  }
+  .qvm-logo-img {
+    height: 34px;
   }
 }
