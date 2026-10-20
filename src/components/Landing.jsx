@@ -134,6 +134,14 @@ const FAQS = [
   },
 ];
 
+// Eventos del Meta Pixel (el código base está en public/index.html)
+function trackMeta(event) {
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
+    window.fbq("track", event);
+  }
+}
+const trackWhatsApp = () => trackMeta("Contact");
+
 /* ========================================================= */
 
 export default function Landing() {
@@ -186,6 +194,7 @@ export default function Landing() {
       console.warn("No se pudo enviar el aviso por mail:", notifyError);
     }
 
+    trackMeta("Lead");
     setStatus("success");
     setForm({ nombre: "", negocio: "", rubro: "", whatsapp: "" });
   };
@@ -248,6 +257,7 @@ export default function Landing() {
               </a>
               <a
                 href={whatsappHref}
+              onClick={trackWhatsApp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="qvm-btn qvm-btn-ghost"
@@ -496,6 +506,7 @@ export default function Landing() {
             </a>
             <a
               href={whatsappHref}
+              onClick={trackWhatsApp}
               target="_blank"
               rel="noopener noreferrer"
               className="qvm-btn qvm-btn-ghost-light"
@@ -528,7 +539,8 @@ export default function Landing() {
           </div>
           <div>
             <h4>Contacto</h4>
-            <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
+            <a href={whatsappHref}
+              onClick={trackWhatsApp} target="_blank" rel="noopener noreferrer">
               {PHONE_DISPLAY}
             </a>
             <a href={`https://instagram.com/${INSTAGRAM}`} target="_blank" rel="noopener noreferrer">
@@ -549,6 +561,7 @@ export default function Landing() {
       {/* WHATSAPP FLOTANTE */}
       <a
         href={whatsappHref}
+              onClick={trackWhatsApp}
         target="_blank"
         rel="noopener noreferrer"
         className="qvm-whatsapp-float"
