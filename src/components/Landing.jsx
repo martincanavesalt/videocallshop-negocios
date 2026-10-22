@@ -115,6 +115,38 @@ const PERFILES = [
   },
 ];
 
+// Planes mensuales (precios en pesos argentinos). Editá acá precios y minutos.
+const PLANES = [
+  {
+    name: "Plan 60",
+    desc: "Ideal para empezar a vender por videollamada y validar el canal en tu marca.",
+    minutos: "60",
+    unidad: "minutos por mes",
+    precio: "200.000",
+  },
+  {
+    name: "Plan 120",
+    desc: "Para marcas que ya venden en vivo y quieren sumar más atenciones y vivos cada mes.",
+    minutos: "120",
+    unidad: "minutos por mes",
+    precio: "300.000",
+    featured: true,
+  },
+  {
+    name: "Plan Ilimitado",
+    desc: "Para marcas que hacen del Live Shopping un canal de venta permanente.",
+    minutos: "∞",
+    unidad: "minutos ilimitados",
+    precio: "500.000",
+  },
+];
+const PLAN_INCLUYE = [
+  "Uso de la aplicación",
+  "Vivos (Live Shopping)",
+  "Personal Shopper",
+  "Locales y usuarios ilimitados",
+];
+
 const FAQS = [
   {
     q: "¿Necesito equipamiento especial?",
@@ -226,6 +258,7 @@ export default function Landing() {
             <a href="#beneficios" onClick={closeMenu}>Beneficios</a>
             <a href="#como-funciona" onClick={closeMenu}>Cómo funciona</a>
             <a href="#soluciones" onClick={closeMenu}>Soluciones</a>
+            <a href="#planes" onClick={closeMenu}>Planes</a>
             <a href="#faq" onClick={closeMenu}>Preguntas</a>
             <a href="#contacto" className="qvm-btn qvm-btn-primary qvm-btn-sm" onClick={closeMenu}>
               Sumá tu comercio
@@ -382,6 +415,57 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ================= PLANES ================= */}
+      <section className="qvm-section qvm-pricing" id="planes">
+        <div className="qvm-container">
+          <div className="qvm-section-head">
+            <span className="qvm-eyebrow qvm-eyebrow-light">Planes</span>
+            <h2>Elegí el plan para tu marca</h2>
+            <p>
+              Un precio por marca, sin importar la cantidad de locales ni de usuarios.
+            </p>
+          </div>
+          <div className="qvm-price-grid">
+            {PLANES.map((p) => (
+              <article className={`qvm-price ${p.featured ? "is-featured" : ""}`} key={p.name}>
+                {p.featured && <span className="qvm-plan-badge">Recomendado</span>}
+                <h3>{p.name}</h3>
+                <p className="qvm-price-desc">{p.desc}</p>
+                <div className="qvm-price-min">
+                  <strong>{p.minutos}</strong>
+                  <span>{p.unidad}</span>
+                </div>
+                <ul>
+                  {PLAN_INCLUYE.map((it) => (
+                    <li key={it}>{it}</li>
+                  ))}
+                </ul>
+                <p className="qvm-price-note">Precio por marca · sin límite de locales ni usuarios</p>
+                <div className="qvm-price-amount">
+                  <span className="qvm-price-cur">$</span>
+                  <strong>{p.precio}</strong>
+                  <span className="qvm-price-per">/mes</span>
+                </div>
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                    `¡Hola! Quiero contratar el ${p.name} de VideoCallShop.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={trackWhatsApp}
+                  className="qvm-btn qvm-btn-primary qvm-btn-block"
+                >
+                  Contratar plan
+                </a>
+              </article>
+            ))}
+          </div>
+          <p className="qvm-price-legal">
+            Precios en pesos argentinos, por mes. Consultá condiciones e impuestos antes de contratar.
+          </p>
+        </div>
+      </section>
+
       {/* ================= FORMULARIO ================= */}
       <section className="qvm-section" id="contacto">
         <div className="qvm-container qvm-form-grid">
@@ -533,6 +617,7 @@ export default function Landing() {
           </div>
           <div>
             <h4>Soluciones</h4>
+            <a href="#planes">Planes y precios</a>
             <a href="#soluciones">Emprendedor</a>
             <a href="#soluciones">Local</a>
             <a href="#soluciones">Marca</a>

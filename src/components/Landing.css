@@ -911,6 +911,160 @@ body {
   transform: scale(1.08);
 }
 
+/* ---------- Planes y precios (Azul Noche) ---------- */
+.qvm-pricing {
+  position: relative;
+  overflow: hidden;
+  background: var(--night);
+  color: var(--white);
+}
+.qvm-pricing::before {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: var(--blue);
+  left: -220px;
+  top: -200px;
+}
+.qvm-pricing > .qvm-container {
+  position: relative;
+}
+.qvm-pricing .qvm-section-head .qvm-eyebrow {
+  align-items: center;
+}
+.qvm-pricing .qvm-section-head p {
+  color: rgba(255, 255, 255, 0.78);
+}
+.qvm-price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  align-items: stretch;
+}
+.qvm-price {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  background: var(--night-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 36px 28px 30px;
+}
+.qvm-price.is-featured {
+  border: 2px solid var(--green);
+  box-shadow: 0 24px 60px -24px rgba(41, 210, 171, 0.45);
+  transform: translateY(-10px);
+}
+.qvm-price .qvm-plan-badge {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.qvm-price h3 {
+  font-size: 28px;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.qvm-price-desc {
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  min-height: 3.2em;
+}
+.qvm-price-min {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.qvm-price-min strong {
+  font-size: 68px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.qvm-price-min span {
+  font-weight: 600;
+  font-size: 15px;
+  margin-top: 6px;
+}
+.qvm-price ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 18px;
+  text-align: left;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: center;
+}
+.qvm-price li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+}
+.qvm-price li::before {
+  content: "✓";
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--night);
+  font-size: 12px;
+  font-weight: 700;
+}
+.qvm-price-note {
+  margin: 0 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+.qvm-price-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin: auto 0 20px;
+}
+.qvm-price-amount strong {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.qvm-price-cur,
+.qvm-price-per {
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+.qvm-price-legal {
+  text-align: center;
+  margin: 32px 0 0;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+}
+@media (max-width: 960px) {
+  .qvm-price-grid {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .qvm-price.is-featured {
+    transform: none;
+  }
+  .qvm-price-desc {
+    min-height: 0;
+  }
+}
+
 /* ---------- Animaciones ---------- */
 @keyframes qvm-pulse {
   0%,
