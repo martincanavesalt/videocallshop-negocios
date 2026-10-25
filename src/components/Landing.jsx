@@ -9,8 +9,8 @@ import logo from "../assets/logo.png";
    ========================================================= */
 const BRAND = "VideoCallShop";
 const DOMAIN = "quierovendermas.com.ar";
-const WHATSAPP_NUMBER = "5493415858527"; // 341 585 8527 — solo dígitos, formato internacional sin "+"
-const PHONE_DISPLAY = "341 585 8527";
+const WHATSAPP_NUMBER = "5493412668558"; // +54 9 341 266 8558 — solo dígitos, formato internacional sin "+"
+const PHONE_DISPLAY = "341 266 8558";
 const INSTAGRAM = "VideoCallShop.ok";
 const WEB = "videocallshop.com";
 const LEMA = "Comprá con alguien que te asesore.";
