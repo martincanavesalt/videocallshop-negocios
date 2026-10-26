@@ -16,6 +16,29 @@ const FECHAS_BLOQUEADAS = [];
 
 const NOTIFY_EMAIL = "videocallshoppping@gmail.com";
 const NOTIFY_ENDPOINT = `https://formsubmit.co/ajax/${NOTIFY_EMAIL}`;
+
+// Confirmación por mail al cliente con EmailJS (sale desde tu Gmail).
+// Completá estos 3 datos desde emailjs.com (ver README → "Confirmación al cliente").
+// Son datos públicos: está bien que estén en el código.
+const EMAILJS_SERVICE_ID = ""; // ej: "service_abc123"
+const EMAILJS_TEMPLATE_ID = ""; // ej: "template_xyz789"
+const EMAILJS_PUBLIC_KEY = ""; // ej: "AbCdEf123456"
+
+async function enviarConfirmacionCliente(params) {
+  if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) return false;
+  const r = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service_id: EMAILJS_SERVICE_ID,
+      template_id: EMAILJS_TEMPLATE_ID,
+      user_id: EMAILJS_PUBLIC_KEY,
+      template_params: params,
+    }),
+  });
+  if (!r.ok) throw new Error(`EmailJS ${r.status}: ${await r.text()}`);
+  return true;
+}
 const TZ = "America/Argentina/Buenos_Aires";
 /* ========================================================= */
 
@@ -210,19 +233,26 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
           _subject: `Nueva reunión agendada: ${form.empresa} — ${textoFecha} ${hora} h`,
           _replyto: form.email,
           _template: "table",
-          // Copia de confirmación para quien pidió la reunión
-          _autoresponse:
-            `¡Hola ${form.nombre}! Tu reunión con VideoCallShop quedó agendada para el ` +
-            `${textoFecha} a las ${hora} h (hora Argentina), con una duración de ${DURACION_MIN} minutos. ` +
-            `Te vamos a contactar por WhatsApp o por este mail con el link de la videollamada, ` +
-            `y el día anterior te enviamos un recordatorio. ` +
-            `Si necesitás cambiar el horario, respondé este mail. ` +
-            (whatsappHref ? `¿Dudas? Escribinos por WhatsApp: ${whatsappHref} ` : "") +
-            `¡Gracias! — Equipo VideoCallShop`,
         }),
       });
     } catch (err) {
       console.warn("No se pudo enviar el aviso por mail:", err);
+    }
+
+    // Confirmación al cliente (independiente del aviso a VideoCallShop)
+    try {
+      await enviarConfirmacionCliente({
+        to_email: form.email,
+        to_name: form.nombre,
+        empresa: form.empresa,
+        fecha: textoFecha,
+        hora,
+        duracion: DURACION_MIN,
+        whatsapp_link: whatsappHref || "",
+        reply_to: NOTIFY_EMAIL,
+      });
+    } catch (err) {
+      console.warn("No se pudo enviar la confirmación al cliente:", err);
     }
 
     if (onAgendado) onAgendado();
@@ -263,7 +293,11 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
             <p className="ag-confirm-when">
               {confirmado.textoFecha} a las {confirmado.hora} h
             </p>
-            <p>Te enviamos la confirmación a tu mail (revisá spam) y un recordatorio el día anterior. Te contactamos por WhatsApp o mail con el link de la videollamada.</p>
+            <p>
+              Te enviaremos la confirmación vía email o WhatsApp y también un recordatorio el día
+              anterior.
+            </p>
+            <p>Te contactamos por WhatsApp o mail con el link de la videollamada.</p>
             <div className="ag-confirm-actions">
               <a
                 className="qvm-btn qvm-btn-primary"
