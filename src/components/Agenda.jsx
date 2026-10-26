@@ -177,11 +177,20 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
           Reunión: `${textoFecha} a las ${hora} h`,
           "Nombre y apellido": form.nombre,
           Teléfono: form.telefono,
-          Mail: form.email,
+          // FormSubmit manda la copia automática al campo que se llama "email"
+          email: form.email,
           Empresa: form.empresa,
           "Por qué le interesó": form.interes,
           _subject: `Nueva reunión agendada: ${form.empresa} — ${textoFecha} ${hora} h`,
           _replyto: form.email,
+          _template: "table",
+          // Copia de confirmación para quien pidió la reunión
+          _autoresponse:
+            `¡Hola ${form.nombre}! Tu reunión con VideoCallShop quedó agendada para el ` +
+            `${textoFecha} a las ${hora} h (hora Argentina), con una duración de ${DURACION_MIN} minutos. ` +
+            `Te vamos a contactar por WhatsApp o por este mail con el link de la videollamada, ` +
+            `y el día anterior te enviamos un recordatorio. ` +
+            `Si necesitás cambiar el horario, respondé este mail. ¡Gracias! — Equipo VideoCallShop`,
         }),
       });
     } catch (err) {
@@ -226,7 +235,7 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
             <p className="ag-confirm-when">
               {confirmado.textoFecha} a las {confirmado.hora} h
             </p>
-            <p>Te contactamos por WhatsApp o mail con el link de la videollamada.</p>
+            <p>Te enviamos la confirmación a tu mail (revisá spam) y un recordatorio el día anterior. Te contactamos por WhatsApp o mail con el link de la videollamada.</p>
             <div className="ag-confirm-actions">
               <a
                 className="qvm-btn qvm-btn-primary"

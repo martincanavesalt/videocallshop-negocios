@@ -37,3 +37,6 @@ as $$
 $$;
 
 grant execute on function horarios_ocupados(date, date) to anon;
+
+-- Recordatorios: marca qué reuniones ya recibieron el aviso del día anterior
+alter table reuniones add column if not exists recordatorio_enviado boolean not null default false;

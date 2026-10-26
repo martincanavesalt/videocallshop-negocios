@@ -125,6 +125,26 @@ Para cambiar días, horarios, duración o bloquear feriados, editá las constant
 principio de `src/components/Agenda.jsx` (`DIAS_DISPONIBLES`, `HORA_INICIO`, `HORA_FIN`,
 `DURACION_MIN`, `FECHAS_BLOQUEADAS`).
 
+## Mails de la agenda
+
+**Confirmación al cliente (inmediata):** al agendar, FormSubmit te manda el aviso a vos y
+una respuesta automática al mail del cliente con el día y la hora. La primera vez,
+FormSubmit te manda un mail para **activar** el formulario: hacé clic en el link.
+
+**Recordatorio un día antes:** lo envía GitHub Actions todos los días a las 10:00
+(`.github/workflows/recordatorios.yml` + `scripts/recordatorios/enviar.mjs`).
+Configuración, una sola vez:
+
+1. Supabase → SQL Editor → corré de nuevo `supabase/reuniones.sql` (agrega la columna `recordatorio_enviado`).
+2. Supabase → Project Settings → API Keys → **Secret keys** → creá una clave nueva (`sb_secret_...`).
+3. Gmail → myaccount.google.com → Seguridad → activá la verificación en 2 pasos →
+   **Contraseñas de aplicaciones** → creá una (16 letras).
+4. GitHub → Settings → Secrets and variables → Actions → agregá:
+   - `SUPABASE_SECRET_KEY` = la clave `sb_secret_...` (solo acá, **nunca** en `REACT_APP_...`)
+   - `GMAIL_USER` = la cuenta de Gmail que envía
+   - `GMAIL_APP_PASSWORD` = la contraseña de aplicación
+5. Probalo: Actions → "Recordatorios de reuniones" → Run workflow (con `dry_run` = 1 solo muestra, sin enviar).
+
 ## Probar en tu compu (opcional)
 
 ```bash

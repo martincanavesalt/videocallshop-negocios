@@ -3,3 +3,4 @@ build
 .env
 .DS_Store
 npm-debug.log*
+scripts/recordatorios/node_modules
