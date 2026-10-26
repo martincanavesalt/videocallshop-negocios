@@ -108,6 +108,23 @@ el dominio a un proveedor de DNS. La opción gratis más simple es **Cloudflare*
 4. La propagación puede tardar de minutos a 24-48 h. Después volvé al Paso 3 y
    activá **Enforce HTTPS**.
 
+## Agenda de reuniones (martes y jueves de 14 a 19 h)
+
+La sección **"Agendá una reunión"** (`src/components/Agenda.jsx`) guarda cada reserva en
+Supabase y te avisa por mail. Para activarla, una sola vez:
+
+1. En Supabase → **SQL Editor**, pegá el contenido de `supabase/reuniones.sql` y tocá **Run**.
+2. Listo. Las reuniones se ven en **Table Editor → reuniones**.
+
+Qué hace el script:
+- Crea la tabla `reuniones` (fecha, hora, nombre, teléfono, mail, empresa, interés).
+- No deja reservar dos veces el mismo día y horario.
+- La web solo puede ver **qué horarios están ocupados**, nunca los datos de las personas.
+
+Para cambiar días, horarios, duración o bloquear feriados, editá las constantes al
+principio de `src/components/Agenda.jsx` (`DIAS_DISPONIBLES`, `HORA_INICIO`, `HORA_FIN`,
+`DURACION_MIN`, `FECHAS_BLOQUEADAS`).
+
 ## Probar en tu compu (opcional)
 
 ```bash

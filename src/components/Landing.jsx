@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import "./Landing.css";
 import heroLive from "../assets/hero-live.jpg";
 import logo from "../assets/logo.png";
+import Agenda from "./Agenda";
 
 /* =========================================================
    CONFIGURACIÓN RÁPIDA — editá estos valores
@@ -259,6 +260,7 @@ export default function Landing() {
             <a href="#como-funciona" onClick={closeMenu}>Cómo funciona</a>
             <a href="#soluciones" onClick={closeMenu}>Soluciones</a>
             <a href="#planes" onClick={closeMenu}>Planes</a>
+            <a href="#agenda" onClick={closeMenu}>Agendá una reunión</a>
             <a href="#faq" onClick={closeMenu}>Preguntas</a>
             <a href="#contacto" className="qvm-btn qvm-btn-primary qvm-btn-sm" onClick={closeMenu}>
               Sumá tu comercio
@@ -466,6 +468,9 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ================= AGENDA ================= */}
+      <Agenda onAgendado={() => trackMeta("Schedule")} />
+
       {/* ================= FORMULARIO ================= */}
       <section className="qvm-section" id="contacto">
         <div className="qvm-container qvm-form-grid">
@@ -635,6 +640,7 @@ export default function Landing() {
               {WEB}
             </a>
             <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            <a href="#agenda">Agendá una reunión</a>
             <a href="#contacto">Solicitá una demo</a>
           </div>
         </div>
