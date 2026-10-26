@@ -100,6 +100,28 @@ function WaIcon() {
   );
 }
 
+// Convierte un teléfono argentino como lo escribe la gente ("0341 15 512-3456",
+// "+54 9 341 512 3456", "341 5123456") al formato de WhatsApp: 549 + área + número.
+function telefonoWhatsApp(tel) {
+  let d = String(tel || "").replace(/\D/g, "");
+  if (d.startsWith("00")) d = d.slice(2);
+  if (d.startsWith("54")) {
+    d = d.slice(2);
+    if (d.startsWith("9")) d = d.slice(1);
+  }
+  if (d.startsWith("0")) d = d.slice(1);
+  if (d.length === 12) {
+    // sacar el "15" que va después del código de área (2, 3 o 4 dígitos)
+    for (const i of [2, 3, 4]) {
+      if (d.slice(i, i + 2) === "15") {
+        d = d.slice(0, i) + d.slice(i + 2);
+        break;
+      }
+    }
+  }
+  return d.length === 10 ? `549${d}` : d;
+}
+
 const VACIO = { nombre: "", telefono: "", email: "", empresa: "", interes: "" };
 
 export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
@@ -177,6 +199,10 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
           Reunión: `${textoFecha} a las ${hora} h`,
           "Nombre y apellido": form.nombre,
           Teléfono: form.telefono,
+          // Link directo para escribirle al cliente por WhatsApp desde el mail
+          "Escribirle por WhatsApp": `https://wa.me/${telefonoWhatsApp(form.telefono)}?text=${encodeURIComponent(
+            `¡Hola ${form.nombre}! Te escribo de VideoCallShop por la reunión del ${textoFecha} a las ${hora} h.`
+          )}`,
           // FormSubmit manda la copia automática al campo que se llama "email"
           email: form.email,
           Empresa: form.empresa,
@@ -190,7 +216,9 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
             `${textoFecha} a las ${hora} h (hora Argentina), con una duración de ${DURACION_MIN} minutos. ` +
             `Te vamos a contactar por WhatsApp o por este mail con el link de la videollamada, ` +
             `y el día anterior te enviamos un recordatorio. ` +
-            `Si necesitás cambiar el horario, respondé este mail. ¡Gracias! — Equipo VideoCallShop`,
+            `Si necesitás cambiar el horario, respondé este mail. ` +
+            (whatsappHref ? `¿Dudas? Escribinos por WhatsApp: ${whatsappHref} ` : "") +
+            `¡Gracias! — Equipo VideoCallShop`,
         }),
       });
     } catch (err) {
