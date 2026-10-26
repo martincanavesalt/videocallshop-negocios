@@ -260,9 +260,8 @@ export default function Landing() {
             <a href="#como-funciona" onClick={closeMenu}>Cómo funciona</a>
             <a href="#soluciones" onClick={closeMenu}>Soluciones</a>
             <a href="#planes" onClick={closeMenu}>Planes</a>
-            <a href="#agenda" onClick={closeMenu}>Agendá una reunión</a>
             <a href="#faq" onClick={closeMenu}>Preguntas</a>
-            <a href="#contacto" className="qvm-btn qvm-btn-primary qvm-btn-sm" onClick={closeMenu}>
+            <a href="#agenda" className="qvm-btn qvm-btn-primary qvm-btn-sm" onClick={closeMenu}>
               Sumá tu comercio
             </a>
           </nav>
@@ -287,7 +286,7 @@ export default function Landing() {
               diferencial a tus clientes vendiendo con atención personalizada.
             </p>
             <div className="qvm-btn-row">
-              <a href="#contacto" className="qvm-btn qvm-btn-primary">
+              <a href="#agenda" className="qvm-btn qvm-btn-primary">
                 Sumá tu comercio →
               </a>
               <a
@@ -310,6 +309,13 @@ export default function Landing() {
           <HeroMockup />
         </div>
       </section>
+
+      {/* ================= AGENDA (debajo del hero) ================= */}
+      <Agenda
+        onAgendado={() => trackMeta("Schedule")}
+        whatsappHref={whatsappHref}
+        onWhatsApp={trackWhatsApp}
+      />
 
       {/* ================= MARQUEE INTEGRACIONES ================= */}
       <section className="qvm-marquee" aria-label="Medios de pago y envío compatibles">
@@ -468,9 +474,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ================= AGENDA ================= */}
-      <Agenda onAgendado={() => trackMeta("Schedule")} />
-
       {/* ================= FORMULARIO ================= */}
       <section className="qvm-section" id="contacto">
         <div className="qvm-container qvm-form-grid">
@@ -590,7 +593,7 @@ export default function Landing() {
             <span>Videollamadas y vivos en una sola app.</span>
           </h2>
           <div className="qvm-btn-row qvm-btn-row-center">
-            <a href="#contacto" className="qvm-btn qvm-btn-light">
+            <a href="#agenda" className="qvm-btn qvm-btn-light">
               Sumá tu comercio →
             </a>
             <a

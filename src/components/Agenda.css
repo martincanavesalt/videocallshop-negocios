@@ -280,3 +280,28 @@
     width: 100%;
   }
 }
+
+/* Botón de WhatsApp para dudas */
+.ag-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 2px solid #25d366;
+  background: var(--white);
+  color: var(--night);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.ag-wa svg {
+  color: #25d366;
+  flex: none;
+}
+.ag-wa:hover {
+  background: #e9fbf0;
+  transform: translateY(-2px);
+}
