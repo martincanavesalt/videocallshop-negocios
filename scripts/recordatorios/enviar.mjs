@@ -53,7 +53,7 @@ function headers(extra = {}) {
 }
 
 async function reunionesDe(fecha) {
-  const url = `${SB_URL}/rest/v1/reuniones?select=id,fecha,hora,nombre,email,telefono,empresa` +
+  const url = `${SB_URL}/rest/v1/reuniones?select=id,fecha,hora,nombre,email,telefono,empresa,rubro,plan` +
     `&fecha=eq.${fecha}&recordatorio_enviado=eq.false&order=hora.asc`;
   const r = await fetch(url, { headers: headers() });
   if (!r.ok) throw new Error(`Supabase respondió ${r.status}: ${await r.text()}`);
@@ -128,10 +128,10 @@ function mailEquipoHtml(r, cuando, hora) {
         ${esc(cuando)} · ${esc(hora)} h
       </div>
       <table cellpadding="0" cellspacing="0" style="font-size:15px;margin-bottom:22px">
-        ${fila("Cliente", r.nombre)}${fila("Empresa", r.empresa)}${fila("Teléfono", r.telefono)}${fila("Mail", r.email)}
+        ${fila("Cliente", r.nombre)}${fila("Negocio", r.empresa)}${fila("Rubro", r.rubro || "-")}${fila("WhatsApp", r.telefono)}${fila("Mail", r.email || "(no dejó)")}${r.plan ? fila("Plan de interés", r.plan) : ""}
       </table>
       <a href="${wa}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:999px">Escribirle por WhatsApp</a>
-      <p style="margin:16px 0 0;font-size:13px;color:#6b7a90">Ya le enviamos el recordatorio a ${esc(r.email)}.</p>
+      <p style="margin:16px 0 0;font-size:13px;color:#6b7a90">${r.email ? `Ya le enviamos el recordatorio a ${esc(r.email)}.` : "No dejó mail: recordale la demo por WhatsApp."}</p>
     </td></tr>
   </table></td></tr></table></body></html>`;
 }
@@ -151,7 +151,8 @@ async function main() {
   for (const r of lista) {
     const hora = String(r.hora).slice(0, 5);
     try {
-      const info = await transport.sendMail({
+      // Al cliente sólo si dejó mail (es opcional); el aviso al equipo sale siempre.
+      const info = r.email ? await transport.sendMail({
         from: `"VideoCallShop" <${GMAIL_USER}>`,
         to: r.email,
         replyTo: COPIA,
@@ -161,11 +162,11 @@ async function main() {
           `(hora Argentina, ${DURACION_MIN} min).\n\nTe enviamos el link de la videollamada por WhatsApp o por este mail. ` +
           `Si necesitás cambiar el horario, respondé este mail o escribinos a wa.me/${WHATSAPP}.\n\nEquipo VideoCallShop`,
         html: mailHtml(r, cuando, hora),
-      });
+      }) : null;
       const infoEquipo = await transport.sendMail({
         from: `"VideoCallShop" <${GMAIL_USER}>`,
         to: COPIA,
-        replyTo: r.email,
+        replyTo: r.email || COPIA,
         subject: `Mañana ${hora} h: reunión con ${r.nombre} (${r.empresa})`,
         text:
           `Reunión de mañana: ${cuando} a las ${hora} h\n\nCliente: ${r.nombre}\nEmpresa: ${r.empresa}\n` +
@@ -173,13 +174,17 @@ async function main() {
         html: mailEquipoHtml(r, cuando, hora),
       });
       if (DRY) {
-        const m = JSON.parse(info.message);
         const me = JSON.parse(infoEquipo.message);
-        console.log(`[DRY_RUN] para ${m.to?.[0]?.address} — ${m.subject}`);
+        if (info) {
+          const m = JSON.parse(info.message);
+          console.log(`[DRY_RUN] para ${m.to?.[0]?.address} — ${m.subject}`);
+        } else {
+          console.log(`[DRY_RUN] ${r.nombre} no dejó mail: sólo aviso al equipo`);
+        }
         console.log(`[DRY_RUN] para ${me.to?.[0]?.address} — ${me.subject} — WhatsApp: wa.me/${telefonoWhatsApp(r.telefono)}`);
       } else {
         await marcarEnviado(r.id);
-        console.log(`Enviado a ${r.email} (${r.empresa}) — ${hora} h`);
+        console.log(`${r.email ? `Enviado a ${r.email}` : 'Sin mail del cliente'} (${r.empresa}) — ${hora} h`);
       }
     } catch (e) {
       errores++;

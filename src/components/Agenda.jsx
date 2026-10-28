@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./Agenda.css";
+import { RUBROS } from "../contenido";
+import { trackReunionAgendada, trackLeadGuia, trackWhatsApp } from "../medicion";
 
 /* =========================================================
    CONFIGURACIÓN DE LA AGENDA — editá estos valores
@@ -145,9 +147,11 @@ function telefonoWhatsApp(tel) {
   return d.length === 10 ? `549${d}` : d;
 }
 
-const VACIO = { nombre: "", telefono: "", email: "", empresa: "", interes: "" };
+const VACIO = { nombre: "", negocio: "", rubro: "", whatsapp: "", email: "" };
 
-export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
+export default function Agenda({ whatsappHref, planInteres }) {
+  const [modo, setModo] = useState("demo"); // demo | guia
+  const [guiaStatus, setGuiaStatus] = useState("idle"); // idle | sending | success | error
   const dias = useMemo(generarDias, []);
   const horarios = useMemo(generarHorarios, []);
   const [fecha, setFecha] = useState(dias[0]?.iso || "");
@@ -196,7 +200,18 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
       return;
     }
 
-    const { error } = await supabase.from("reuniones").insert([{ fecha, hora, ...form }]);
+    const { error } = await supabase.from("reuniones").insert([
+      {
+        fecha,
+        hora,
+        nombre: form.nombre,
+        empresa: form.negocio,
+        rubro: form.rubro,
+        telefono: form.whatsapp,
+        email: form.email.trim() || null,
+        plan: planInteres || null,
+      },
+    ]);
 
     if (error) {
       if (error.code === "23505") {
@@ -220,18 +235,18 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           Reunión: `${textoFecha} a las ${hora} h`,
-          "Nombre y apellido": form.nombre,
-          Teléfono: form.telefono,
+          Nombre: form.nombre,
+          Negocio: form.negocio,
+          Rubro: form.rubro,
+          WhatsApp: form.whatsapp,
           // Link directo para escribirle al cliente por WhatsApp desde el mail
-          "Escribirle por WhatsApp": `https://wa.me/${telefonoWhatsApp(form.telefono)}?text=${encodeURIComponent(
-            `¡Hola ${form.nombre}! Te escribo de VideoCallShop por la reunión del ${textoFecha} a las ${hora} h.`
+          "Escribirle por WhatsApp": `https://wa.me/${telefonoWhatsApp(form.whatsapp)}?text=${encodeURIComponent(
+            `¡Hola ${form.nombre}! Te escribo de VideoCallShop por la demo del ${textoFecha} a las ${hora} h.`
           )}`,
-          // FormSubmit manda la copia automática al campo que se llama "email"
-          email: form.email,
-          Empresa: form.empresa,
-          "Por qué le interesó": form.interes,
-          _subject: `Nueva reunión agendada: ${form.empresa} — ${textoFecha} ${hora} h`,
-          _replyto: form.email,
+          Mail: form.email || "(no lo dejó)",
+          "Plan de interés": planInteres || "(sin elegir)",
+          _subject: `Nueva demo agendada: ${form.negocio} — ${textoFecha} ${hora} h`,
+          ...(form.email ? { _replyto: form.email } : {}),
           _template: "table",
         }),
       });
@@ -240,11 +255,11 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
     }
 
     // Confirmación al cliente (independiente del aviso a VideoCallShop)
-    try {
+    if (form.email.trim()) try {
       await enviarConfirmacionCliente({
         to_email: form.email,
         to_name: form.nombre,
-        empresa: form.empresa,
+        empresa: form.negocio,
         fecha: textoFecha,
         hora,
         duracion: DURACION_MIN,
@@ -255,7 +270,7 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
       console.warn("No se pudo enviar la confirmación al cliente:", err);
     }
 
-    if (onAgendado) onAgendado();
+    trackReunionAgendada({ rubro: form.rubro, plan: planInteres });
     setConfirmado({ textoFecha, hora, link: linkGoogleCalendar(fecha, hora) });
     setOcupados((p) => [...p, `${fecha}|${hora}`]);
     setStatus("success");
@@ -263,30 +278,108 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
     setHora("");
   };
 
+  // ---- Alternativa: guía gratis (tabla "leads") ----
+  const handleGuia = async (e) => {
+    e.preventDefault();
+    setGuiaStatus("sending");
+    if (!supabase) {
+      setGuiaStatus("error");
+      return;
+    }
+    const { error } = await supabase.from("leads").insert([
+      { nombre: form.nombre, negocio: form.negocio, rubro: form.rubro, whatsapp: form.whatsapp },
+    ]);
+    if (error) {
+      console.error("Error guardando el lead:", error);
+      setGuiaStatus("error");
+      return;
+    }
+    try {
+      await fetch(NOTIFY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          Nombre: form.nombre,
+          Negocio: form.negocio,
+          Rubro: form.rubro,
+          WhatsApp: form.whatsapp,
+          "Escribirle por WhatsApp": `https://wa.me/${telefonoWhatsApp(form.whatsapp)}`,
+          _subject: `Nuevo pedido de guía gratis: ${form.negocio || form.nombre}`,
+          _template: "table",
+        }),
+      });
+    } catch (err) {
+      console.warn("No se pudo enviar el aviso por mail:", err);
+    }
+    trackLeadGuia({ rubro: form.rubro });
+    setGuiaStatus("success");
+    setForm(VACIO);
+  };
+
+  const campos = (conMail) => (
+    <div className="ag-fields">
+      <label>
+        Nombre
+        <input name="nombre" value={form.nombre} onChange={handleChange} required autoComplete="given-name" placeholder="Tu nombre" />
+      </label>
+      <label>
+        Negocio
+        <input name="negocio" value={form.negocio} onChange={handleChange} required autoComplete="organization" placeholder="Ej: Indumentaria Sol" />
+      </label>
+      <label>
+        Rubro
+        <select name="rubro" value={form.rubro} onChange={handleChange} required>
+          <option value="">Elegí una opción</option>
+          {RUBROS.map((r) => (
+            <option key={r} value={r}>{r}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        WhatsApp
+        <input name="whatsapp" type="tel" value={form.whatsapp} onChange={handleChange} required autoComplete="tel" placeholder="Ej: 341 123 4567" />
+      </label>
+      {conMail && (
+        <label className="ag-full">
+          <span>Mail <em className="ag-optional">(opcional, para recibir la confirmación)</em></span>
+          <input name="email" type="email" value={form.email} onChange={handleChange} autoComplete="email" placeholder="tu@mail.com" />
+        </label>
+      )}
+    </div>
+  );
+
+  const fechaTexto = (iso) => {
+    const d = dias.find((x) => x.iso === iso);
+    return d ? `${DIAS_LARGOS[d.dow]} ${d.dia} de ${MESES_LARGOS[d.mes]}` : "";
+  };
+
   return (
     <section className="qvm-section qvm-agenda" id="agenda">
       <div className="qvm-container">
         <div className="qvm-section-head">
-          <span className="qvm-eyebrow">Agendá una reunión</span>
-          <h2>Conocé VideoCallShop en una videollamada</h2>
+          <span className="qvm-eyebrow">Agendá tu demo</span>
+          <h2>Mirá VideoCallShop funcionando en tu negocio</h2>
           <p>
-            Elegí un día y un horario. Te mostramos la app y vemos juntos cómo sumarla a tu
-            negocio. Martes y jueves de 14 a 19 h (hora Argentina).
+            En 30 minutos por videollamada te mostramos la app y vemos juntos cómo vender en vivo
+            desde tu local. Martes y jueves de 14 a 19 h (hora Argentina).
           </p>
-          {whatsappHref && (
-            <a
-              className="ag-wa"
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={onWhatsApp}
-            >
-              <WaIcon /> ¿Tenés dudas? Escribinos por WhatsApp
-            </a>
+          {planInteres && (
+            <p className="ag-plan-chip">
+              Plan de interés: <strong>{planInteres}</strong>
+            </p>
           )}
         </div>
 
-        {status === "success" && confirmado ? (
+        <div className="ag-tabs" role="tablist" aria-label="Cómo querés seguir">
+          <button type="button" role="tab" aria-selected={modo === "demo"} className={`ag-tab ${modo === "demo" ? "is-active" : ""}`} onClick={() => setModo("demo")}>
+            Agendá tu demo
+          </button>
+          <button type="button" role="tab" aria-selected={modo === "guia"} className={`ag-tab ${modo === "guia" ? "is-active" : ""}`} onClick={() => setModo("guia")}>
+            Prefiero la guía gratis
+          </button>
+        </div>
+
+        {modo === "demo" && status === "success" && confirmado && (
           <div className="ag-confirm">
             <div className="ag-confirm-icon" aria-hidden="true">✓</div>
             <h3>¡Listo! Tu reunión quedó agendada</h3>
@@ -299,12 +392,7 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
             </p>
             <p>Te contactamos por WhatsApp o mail con el link de la videollamada.</p>
             <div className="ag-confirm-actions">
-              <a
-                className="qvm-btn qvm-btn-primary"
-                href={confirmado.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a className="qvm-btn qvm-btn-primary" href={confirmado.link} target="_blank" rel="noopener noreferrer">
                 Agregar a Google Calendar
               </a>
               <button
@@ -319,55 +407,54 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
               </button>
             </div>
           </div>
-        ) : (
-          <form className="ag-card" onSubmit={handleSubmit}>
-            {/* Paso 1: día */}
-            <div className="ag-step">
-              <h3>
-                <span className="ag-n">1</span> Elegí el día
-              </h3>
-              <div className="ag-days" role="radiogroup" aria-label="Día de la reunión">
-                {dias.map((d) => {
-                  const libres = libresDelDia(d.iso);
-                  return (
-                    <button
-                      type="button"
-                      key={d.iso}
-                      role="radio"
-                      aria-checked={fecha === d.iso}
-                      disabled={libres === 0}
-                      className={`ag-day ${fecha === d.iso ? "is-active" : ""}`}
-                      onClick={() => {
-                        setFecha(d.iso);
-                        setHora("");
-                        if (status === "taken") setStatus("idle");
-                      }}
-                    >
-                      <span className="ag-day-dow">{DIAS[d.dow]}</span>
-                      <span className="ag-day-num">{d.dia}</span>
-                      <span className="ag-day-mes">{MESES[d.mes]}</span>
-                      <span className="ag-day-free">{libres === 0 ? "Completo" : `${libres} libres`}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+        )}
 
-            {/* Paso 2: horario */}
-            <div className="ag-step">
-              <h3>
-                <span className="ag-n">2</span> Elegí el horario
-              </h3>
-              <div className="ag-times" role="radiogroup" aria-label="Horario de la reunión">
-                {horarios.map((h) => {
-                  const ok = disponible(fecha, h);
-                  return (
+        {modo === "demo" && !(status === "success" && confirmado) && (
+          <form className="ag-card" onSubmit={handleSubmit}>
+            <div className="ag-cal">
+              <div className="ag-step">
+                <h3>
+                  <span className="ag-n">1</span> Elegí el día
+                </h3>
+                <div className="ag-days" role="radiogroup" aria-label="Día de la reunión">
+                  {dias.map((d) => {
+                    const libres = libresDelDia(d.iso);
+                    return (
+                      <button
+                        type="button"
+                        key={d.iso}
+                        role="radio"
+                        aria-checked={fecha === d.iso}
+                        disabled={libres === 0}
+                        className={`ag-day ${fecha === d.iso ? "is-active" : ""}`}
+                        onClick={() => {
+                          setFecha(d.iso);
+                          setHora("");
+                          if (status === "taken") setStatus("idle");
+                        }}
+                      >
+                        <span className="ag-day-dow">{DIAS[d.dow]}</span>
+                        <span className="ag-day-num">{d.dia}</span>
+                        <span className="ag-day-mes">{MESES[d.mes]}</span>
+                        <span className="ag-day-free">{libres === 0 ? "Completo" : `${libres} libres`}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="ag-step">
+                <h3>
+                  <span className="ag-n">2</span> Elegí el horario
+                </h3>
+                <div className="ag-times" role="radiogroup" aria-label="Horario de la reunión">
+                  {horarios.map((h) => (
                     <button
                       type="button"
                       key={h}
                       role="radio"
                       aria-checked={hora === h}
-                      disabled={!ok}
+                      disabled={!disponible(fecha, h)}
                       className={`ag-time ${hora === h ? "is-active" : ""}`}
                       onClick={() => {
                         setHora(h);
@@ -376,102 +463,84 @@ export default function Agenda({ onAgendado, whatsappHref, onWhatsApp }) {
                     >
                       {h}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+                <p className="ag-hint">Cada reunión dura {DURACION_MIN} minutos.</p>
+                {status === "taken" && (
+                  <p className="ag-msg is-error">Ese horario se acaba de ocupar. Elegí otro, por favor.</p>
+                )}
               </div>
-              <p className="ag-hint">Cada reunión dura {DURACION_MIN} minutos.</p>
-              {status === "taken" && (
-                <p className="ag-msg is-error">
-                  Ese horario se acaba de ocupar. Elegí otro, por favor.
-                </p>
-              )}
             </div>
 
-            {/* Paso 3: datos */}
             <div className="ag-step">
               <h3>
-                <span className="ag-n">3</span> Completá tus datos
+                <span className="ag-n">3</span> Tus datos
               </h3>
-              <div className="ag-fields">
-                <label>
-                  Nombre y apellido
-                  <input name="nombre" value={form.nombre} onChange={handleChange} required autoComplete="name" />
-                </label>
-                <label>
-                  Teléfono
-                  <input
-                    name="telefono"
-                    type="tel"
-                    value={form.telefono}
-                    onChange={handleChange}
-                    required
-                    autoComplete="tel"
-                    placeholder="Ej: 341 123 4567"
-                  />
-                </label>
-                <label>
-                  Mail
-                  <input
-                    name="email"
-                    type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                    autoComplete="email"
-                  />
-                </label>
-                <label>
-                  Empresa
-                  <input
-                    name="empresa"
-                    value={form.empresa}
-                    onChange={handleChange}
-                    required
-                    autoComplete="organization"
-                  />
-                </label>
-                <label className="ag-full">
-                  ¿Por qué te interesó nuestra app?
-                  <textarea
-                    name="interes"
-                    rows="3"
-                    value={form.interes}
-                    onChange={handleChange}
-                    required
-                    placeholder="Contanos qué vendés y qué te gustaría resolver."
-                  />
-                </label>
-              </div>
+              {campos(true)}
             </div>
 
             <div className="ag-submit">
               <p className="ag-summary">
-                {hora
-                  ? (() => {
-                      const d = dias.find((x) => x.iso === fecha);
-                      return (
-                        <>
-                          Reunión el <strong>{DIAS_LARGOS[d.dow]} {d.dia} de {MESES_LARGOS[d.mes]}</strong> a
-                          las <strong>{hora} h</strong>
-                        </>
-                      );
-                    })()
-                  : "Elegí un día y un horario para continuar."}
+                {hora ? (
+                  <>
+                    Demo el <strong>{fechaTexto(fecha)}</strong> a las <strong>{hora} h</strong>
+                  </>
+                ) : (
+                  "Elegí un día y un horario para continuar."
+                )}
               </p>
-              <button
-                type="submit"
-                className="qvm-btn qvm-btn-primary"
-                disabled={!hora || status === "sending"}
-              >
-                {status === "sending" ? "Agendando..." : "Agendar reunión"}
+              <button type="submit" className="qvm-btn qvm-btn-primary" disabled={!hora || status === "sending"}>
+                {status === "sending" ? "Agendando..." : "Agendar demo"}
               </button>
               {status === "error" && (
-                <p className="ag-msg is-error">
-                  No pudimos agendar la reunión. Probá de nuevo o escribinos por WhatsApp.
-                </p>
+                <p className="ag-msg is-error">No pudimos agendar la reunión. Probá de nuevo o escribinos por WhatsApp.</p>
               )}
             </div>
           </form>
+        )}
+
+        {modo === "guia" && (
+          <form className="ag-card ag-guia" onSubmit={handleGuia}>
+            <div className="ag-guia-copy">
+              <h3>Cómo armar tu primera venta en vivo</h3>
+              <p>Dejanos tus datos y te mandamos la guía gratis por WhatsApp.</p>
+              <ul className="ag-checklist">
+                <li>Qué productos mostrar primero</li>
+                <li>Cómo cerrar la venta antes de cortar la llamada</li>
+                <li>Cómo ofrecer envíos y medios de pago sin fricción</li>
+                <li>Errores comunes que bajan las ventas</li>
+              </ul>
+            </div>
+            <div>
+              {guiaStatus === "success" ? (
+                <div className="ag-guia-ok">
+                  <div className="ag-confirm-icon" aria-hidden="true">✓</div>
+                  <p><strong>¡Listo!</strong> Te escribimos por WhatsApp con la guía en breve.</p>
+                  <button type="button" className="qvm-btn qvm-btn-outline" onClick={() => setModo("demo")}>
+                    Mejor agendo una demo
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {campos(false)}
+                  <button type="submit" className="qvm-btn qvm-btn-primary qvm-btn-block ag-guia-btn" disabled={guiaStatus === "sending"}>
+                    {guiaStatus === "sending" ? "Enviando..." : "Quiero la guía gratis"}
+                  </button>
+                  {guiaStatus === "error" && (
+                    <p className="ag-msg is-error">Hubo un problema al enviar. Probá de nuevo o escribinos por WhatsApp.</p>
+                  )}
+                </>
+              )}
+            </div>
+          </form>
+        )}
+
+        {whatsappHref && (
+          <p className="ag-wa-wrap">
+            <a className="ag-wa" href={whatsappHref} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("agenda")}>
+              <WaIcon /> ¿Tenés dudas? Escribinos por WhatsApp
+            </a>
+          </p>
         )}
       </div>
     </section>

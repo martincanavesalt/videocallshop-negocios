@@ -1204,3 +1204,333 @@ body {
     height: 34px;
   }
 }
+
+/* =========================================================
+   Rediseño oct 2026: recorrido para quien llega desde un anuncio
+   ========================================================= */
+.qvm-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Hero: foto real en lugar del celular */
+.qvm-hero .qvm-pill {
+  font-size: 13px;
+}
+.qvm-hero-media {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 10px 24px;
+}
+.qvm-hero-photo {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 5;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.65);
+  border: 4px solid rgba(255, 255, 255, 0.9);
+}
+.qvm-hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.qvm-hero-live {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #ff4c60;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+.qvm-hero-media .qvm-float-1 {
+  top: auto;
+  bottom: 70px;
+  left: 0;
+}
+.qvm-hero-media .qvm-float-2 {
+  top: 60px;
+  right: 0;
+}
+
+/* Prueba social + integraciones */
+.qvm-proof {
+  background: var(--cloud);
+  padding: 36px 0 40px;
+  border-bottom: 1px solid var(--line);
+}
+.qvm-strip-title {
+  text-align: center;
+  margin: 0 0 18px;
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.qvm-clients {
+  margin-bottom: 30px;
+}
+.qvm-clients-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 18px 40px;
+}
+.qvm-clients-row img {
+  height: 44px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.8;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+.qvm-clients-row img:hover {
+  filter: none;
+  opacity: 1;
+}
+.qvm-integrations {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.qvm-integration {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 10px 18px;
+  border-radius: 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+.qvm-integration img {
+  height: 28px;
+  width: auto;
+  max-width: 130px;
+  object-fit: contain;
+  display: block;
+}
+.qvm-integration-text {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--night);
+}
+
+/* Cómo funciona con video */
+.qvm-how {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+}
+.qvm-how-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.qvm-how-step {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 22px 24px;
+  border-radius: var(--radius);
+  background: var(--cloud);
+}
+.qvm-how-step .qvm-step-n {
+  flex: none;
+  margin: 0;
+}
+.qvm-how-step h3 {
+  font-size: 19px;
+  margin-bottom: 4px;
+}
+.qvm-how-step p {
+  margin: 0;
+  color: var(--text-soft);
+}
+.qvm-how-cta {
+  padding-top: 6px;
+}
+.qvm-video {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.qvm-video-frame {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--night);
+  box-shadow: var(--shadow);
+}
+.qvm-video-instagram .qvm-video-frame {
+  aspect-ratio: 9 / 16;
+}
+.qvm-video-youtube .qvm-video-frame,
+.qvm-video-mp4 .qvm-video-frame {
+  max-width: 560px;
+  aspect-ratio: 16 / 9;
+}
+.qvm-video-frame iframe,
+.qvm-video-frame video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.qvm-video figcaption {
+  font-size: 14px;
+  color: var(--text-soft);
+  text-align: center;
+}
+
+/* 4 beneficios */
+.qvm-feature-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.qvm-section-tint .qvm-feature {
+  background: var(--white);
+}
+
+/* Testimonios */
+.qvm-testimonials {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+}
+.qvm-testimonial {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+.qvm-testimonial blockquote {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+}
+.qvm-testimonial figcaption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.qvm-testimonial figcaption img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.qvm-testimonial figcaption span {
+  display: flex;
+  flex-direction: column;
+}
+.qvm-testimonial small {
+  color: var(--text-soft);
+}
+
+/* Planes unificados */
+.qvm-price-ideal {
+  align-self: center;
+  margin-bottom: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(29, 152, 231, 0.18);
+  color: #8fd0f5;
+  font-size: 13px;
+  font-weight: 600;
+}
+.qvm-price.is-featured .qvm-price-ideal {
+  margin-top: 6px;
+}
+.qvm-price .qvm-price-amount {
+  margin: 0 0 6px;
+}
+.qvm-price .qvm-price-min {
+  flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 20px;
+  color: var(--green);
+}
+.qvm-price .qvm-price-min strong {
+  font-size: 26px;
+  letter-spacing: 0;
+}
+.qvm-price .qvm-price-min span {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+.qvm-price ul {
+  margin-bottom: 24px;
+}
+.qvm-price .qvm-btn-block {
+  margin-top: auto;
+}
+.qvm-price-wa {
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.qvm-price-wa:hover {
+  color: var(--green);
+}
+
+@media (max-width: 960px) {
+  .qvm-how {
+    grid-template-columns: 1fr;
+  }
+  .qvm-feature-grid-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .qvm-hero-media {
+    padding: 10px 0;
+  }
+}
+@media (max-width: 620px) {
+  .qvm-feature-grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .qvm-hero-photo {
+    max-width: 320px;
+  }
+  .qvm-hero-media .qvm-float-1 {
+    left: -4px;
+  }
+  .qvm-hero-media .qvm-float-2 {
+    right: -4px;
+  }
+  .qvm-how-step {
+    padding: 18px;
+  }
+}

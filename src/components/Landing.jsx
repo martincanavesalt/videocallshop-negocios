@@ -1,247 +1,56 @@
 import React, { useState } from "react";
-import { supabase } from "../supabaseClient";
 import "./Landing.css";
-import heroLive from "../assets/hero-live.jpg";
+import heroImg from "../assets/hero.jpg";
 import logo from "../assets/logo.png";
 import Agenda from "./Agenda";
+import {
+  MARCA,
+  HERO,
+  CLIENTES,
+  INTEGRACIONES,
+  PASOS,
+  VIDEO,
+  BENEFICIOS,
+  TESTIMONIOS,
+  PLANES,
+  PLAN_INCLUYE,
+  PLANES_LEGAL,
+  FAQS,
+} from "../contenido";
+import { trackWhatsApp, trackClickDemo, trackClickPlan } from "../medicion";
 
-/* =========================================================
-   CONFIGURACIÓN RÁPIDA — editá estos valores
-   ========================================================= */
-const BRAND = "VideoCallShop";
-const DOMAIN = "quierovendermas.com.ar";
-const WHATSAPP_NUMBER = "5493412668558"; // +54 9 341 266 8558 — solo dígitos, formato internacional sin "+"
-const PHONE_DISPLAY = "341 266 8558";
-const INSTAGRAM = "VideoCallShop.ok";
-const WEB = "videocallshop.com";
-const LEMA = "Comprá con alguien que te asesore.";
-const WHATSAPP_MESSAGE = "¡Hola! Quiero sumar VideoCallShop a mi negocio.";
-const CONTACT_EMAIL = "videocallshoppping@gmail.com";
+// Todo el contenido editable (textos, planes, logos, testimonios, video) está en src/contenido.js
 
-// Mail de aviso: se dispara además del guardado en Supabase, solo para notificar.
-const NOTIFY_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`;
-
-const RUBROS = ["Indumentaria", "Calzado", "Electro", "Cosmética", "Hogar y deco", "Otro"];
-
-// Plataformas que se muestran en la cinta animada. Dejá solo las que realmente uses.
-const INTEGRACIONES = [
-  "Mercado Pago",
-  "Tiendanube",
-  "Transferencia",
-  "Andreani",
-  "Correo Argentino",
-  "OCA",
-  "WhatsApp",
-  "Link de pago",
-];
-
-const BENEFICIOS = [
-  {
-    icon: "person",
-    title: "Atención personalizada",
-    text: "Ofrecé un diferencial a tus clientes vendiendo con atención personalizada: asesorás cara a cara, como en el mostrador, pero estén donde estén.",
-  },
-  {
-    icon: "check",
-    title: "Cerrá la venta durante la llamada",
-    text: "El cliente ve el producto, pregunta y paga sin cortar. Nada de “después te escribo”: la decisión se toma en vivo.",
-  },
-  {
-    icon: "truck",
-    title: "Envíos integrados",
-    text: "Coordinás el envío en el mismo momento de la compra, con los operadores que ya usás. Tu cliente sabe cuándo le llega.",
-  },
-  {
-    icon: "card",
-    title: "Diferentes checkouts",
-    text: "Link de pago, Mercado Pago, transferencia o tu tienda online: cada cliente paga como le resulta más cómodo.",
-  },
-  {
-    icon: "globe",
-    title: "Vendé como se vende en el mundo",
-    text: "Vendé en vivo como se está vendiendo a nivel mundial. El live shopping ya es parte de cómo compra la gente en Asia, EE.UU. y Europa.",
-  },
-  {
-    icon: "bolt",
-    title: "Empezá con lo que tenés",
-    text: "Tu celular, tu stock y tu local alcanzan para arrancar. Sumá un canal de atención por video a tu negocio.",
-  },
-];
-
-const PASOS = [
-  {
-    n: "01",
-    title: "Tu cliente pide la llamada",
-    text: "Desde tu web, Instagram o WhatsApp, con un solo botón.",
-  },
-  {
-    n: "02",
-    title: "Le mostrás en vivo",
-    text: "Recorrés el local, mostrás talles, colores y detalles. Respondés todo en el momento.",
-  },
-  {
-    n: "03",
-    title: "Cobrás y despachás",
-    text: "Elige cómo pagar, confirmás el envío y la venta queda cerrada antes de colgar.",
-  },
-];
-
-const PERFILES = [
-  {
-    tag: "EMPRENDEDOR",
-    title: "Para arrancar",
-    text: "Ideal si vendés por redes y querés dar el salto a la venta en vivo.",
-    items: ["Videollamadas 1 a 1", "Link de pago en la llamada", "Guía de primer live"],
-    cta: "Quiero empezar",
-  },
-  {
-    tag: "LOCAL",
-    title: "Para tu negocio",
-    text: "Para locales físicos que quieren vender a clientes que no pueden acercarse.",
-    items: [
-      "Atención por turnos y en vivo",
-      "Varios vendedores atendiendo",
-      "Envíos integrados",
-      "Diferentes checkouts",
-    ],
-    cta: "Quiero vender más",
-    featured: true,
-  },
-  {
-    tag: "MARCA",
-    title: "Para escalar",
-    text: "Para marcas y cadenas con varias sucursales y eventos de live shopping.",
-    items: ["Eventos en vivo masivos", "Integración a medida", "Acompañamiento comercial"],
-    cta: "Consultar",
-  },
-];
-
-// Planes mensuales (precios en pesos argentinos). Editá acá precios y minutos.
-const PLANES = [
-  {
-    name: "Plan 60",
-    desc: "Ideal para empezar a vender por videollamada y validar el canal en tu marca.",
-    minutos: "60",
-    unidad: "minutos por mes",
-    precio: "200.000",
-  },
-  {
-    name: "Plan 120",
-    desc: "Para marcas que ya venden en vivo y quieren sumar más atenciones y vivos cada mes.",
-    minutos: "120",
-    unidad: "minutos por mes",
-    precio: "300.000",
-    featured: true,
-  },
-  {
-    name: "Plan Ilimitado",
-    desc: "Para marcas que hacen del Live Shopping un canal de venta permanente.",
-    minutos: "∞",
-    unidad: "minutos ilimitados",
-    precio: "500.000",
-  },
-];
-const PLAN_INCLUYE = [
-  "Uso de la aplicación",
-  "Vivos (Live Shopping)",
-  "Personal Shopper",
-  "Locales y usuarios ilimitados",
-];
-
-const FAQS = [
-  {
-    q: "¿Necesito equipamiento especial?",
-    a: "No. Con un celular con buena cámara y conexión estable ya podés empezar. Te damos tips para que la imagen y el sonido se vean profesionales.",
-  },
-  {
-    q: "¿Cómo me pagan los clientes?",
-    a: "Durante la llamada le enviás el medio de pago que prefiera: link de pago, Mercado Pago, transferencia o el checkout de tu tienda online.",
-  },
-  {
-    q: "¿Y el envío?",
-    a: "Lo coordinás en el mismo momento de la venta con el operador logístico que ya usás, o el cliente retira en el local.",
-  },
-  {
-    q: "¿Cuánto tardo en empezar?",
-    a: "Podés hacer tu primera venta en vivo el mismo día. Dejanos tus datos y te mandamos la guía por WhatsApp.",
-  },
-];
-
-// Eventos del Meta Pixel (el código base está en public/index.html)
-function trackMeta(event) {
-  if (typeof window !== "undefined" && typeof window.fbq === "function") {
-    window.fbq("track", event);
-  }
-}
-const trackWhatsApp = () => trackMeta("Contact");
-
-/* ========================================================= */
+const waLink = (texto) => `https://wa.me/${MARCA.whatsapp}?text=${encodeURIComponent(texto)}`;
 
 export default function Landing() {
-  const [form, setForm] = useState({ nombre: "", negocio: "", rubro: "", whatsapp: "" });
-  const [status, setStatus] = useState("idle"); // idle | sending | success | error
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const [planInteres, setPlanInteres] = useState("");
 
-  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    WHATSAPP_MESSAGE
-  )}`;
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus("sending");
-
-    if (!supabase) {
-      console.error("Supabase no está configurado (faltan las claves).");
-      setStatus("error");
-      return;
-    }
-
-    const { error } = await supabase.from("leads").insert([{ ...form }]);
-
-    if (error) {
-      console.error("Error guardando el lead:", error);
-      setStatus("error");
-      return;
-    }
-
-    // Aviso por mail (best-effort): si falla, el lead ya quedó guardado en Supabase igual.
-    try {
-      await fetch(NOTIFY_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          Nombre: form.nombre,
-          Negocio: form.negocio,
-          Rubro: form.rubro,
-          WhatsApp: form.whatsapp,
-          _subject: `Nuevo lead ${BRAND}: ${form.negocio || form.nombre}`,
-        }),
-      });
-    } catch (notifyError) {
-      console.warn("No se pudo enviar el aviso por mail:", notifyError);
-    }
-
-    trackMeta("Lead");
-    setStatus("success");
-    setForm({ nombre: "", negocio: "", rubro: "", whatsapp: "" });
-  };
-
+  const whatsappHref = waLink(MARCA.whatsappMensaje);
   const closeMenu = () => setMenuOpen(false);
+
+  const WaBtn = ({ ubicacion, className, children }) => (
+    <a
+      href={whatsappHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      onClick={() => trackWhatsApp(ubicacion)}
+    >
+      {children}
+    </a>
+  );
 
   return (
     <div className="qvm">
-      {/* ================= NAV ================= */}
+      {/* ================= 1. HEADER ================= */}
       <header className="qvm-nav">
         <div className="qvm-container qvm-nav-inner">
           <a href="#top" className="qvm-logo" onClick={closeMenu} aria-label="VideoCallShop, inicio">
             <img src={logo} alt="" className="qvm-logo-img" />
-            <span>VideoCallShop</span>
+            <span>{MARCA.nombre}</span>
           </a>
 
           <button
@@ -256,189 +65,188 @@ export default function Landing() {
           </button>
 
           <nav className={`qvm-links ${menuOpen ? "is-open" : ""}`}>
-            <a href="#beneficios" onClick={closeMenu}>Beneficios</a>
             <a href="#como-funciona" onClick={closeMenu}>Cómo funciona</a>
-            <a href="#soluciones" onClick={closeMenu}>Soluciones</a>
             <a href="#planes" onClick={closeMenu}>Planes</a>
             <a href="#faq" onClick={closeMenu}>Preguntas</a>
-            <a href="#agenda" className="qvm-btn qvm-btn-primary qvm-btn-sm" onClick={closeMenu}>
-              Sumá tu comercio
+            <a
+              href="#agenda"
+              className="qvm-btn qvm-btn-primary qvm-btn-sm"
+              onClick={() => {
+                closeMenu();
+                trackClickDemo("header");
+              }}
+            >
+              Agendá una demo
             </a>
           </nav>
         </div>
       </header>
 
-      {/* ================= HERO ================= */}
+      {/* ================= 2. HERO ================= */}
       <section className="qvm-hero" id="top">
-        <div className="qvm-hero-glow" aria-hidden="true" />
         <div className="qvm-container qvm-hero-grid">
           <div className="qvm-hero-copy">
             <span className="qvm-pill">
-              <span className="qvm-live-dot" /> Live Shopping
+              <span className="qvm-live-dot" /> {HERO.etiqueta}
             </span>
             <h1>
-              Vendé en vivo.
+              {HERO.titulo}
               <br />
-              <span className="qvm-accent">Vendé más.</span>
+              <span className="qvm-accent">{HERO.tituloAcento}</span>
             </h1>
-            <p className="qvm-lead">
-              Mostrá tus productos y asesorá a tus clientes por videollamada. Ofrecé un
-              diferencial a tus clientes vendiendo con atención personalizada.
-            </p>
+            <p className="qvm-lead">{HERO.bajada}</p>
             <div className="qvm-btn-row">
-              <a href="#agenda" className="qvm-btn qvm-btn-primary">
-                Sumá tu comercio →
+              <a href="#agenda" className="qvm-btn qvm-btn-primary" onClick={() => trackClickDemo("hero")}>
+                Quiero una demo →
               </a>
-              <a
-                href={whatsappHref}
-              onClick={trackWhatsApp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="qvm-btn qvm-btn-ghost"
-              >
+              <WaBtn ubicacion="hero" className="qvm-btn qvm-btn-ghost">
                 <WhatsAppIcon size={18} /> Hablar por WhatsApp
-              </a>
+              </WaBtn>
             </div>
             <ul className="qvm-hero-checks">
-              <li>Cerrá la venta en la llamada</li>
-              <li>Envíos integrados</li>
-              <li>Diferentes checkouts</li>
+              {HERO.destacados.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
             </ul>
           </div>
 
-          <HeroMockup />
-        </div>
-      </section>
-
-      {/* ================= AGENDA (debajo del hero) ================= */}
-      <Agenda
-        onAgendado={() => trackMeta("Schedule")}
-        whatsappHref={whatsappHref}
-        onWhatsApp={trackWhatsApp}
-      />
-
-      {/* ================= MARQUEE INTEGRACIONES ================= */}
-      <section className="qvm-marquee" aria-label="Medios de pago y envío compatibles">
-        <p className="qvm-marquee-title">Cobrá y enviá con lo que ya usás</p>
-        <div className="qvm-marquee-track">
-          {[...INTEGRACIONES, ...INTEGRACIONES].map((name, i) => (
-            <span className="qvm-marquee-item" key={i} aria-hidden={i >= INTEGRACIONES.length}>
-              {name}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* ================= VALOR ================= */}
-      <section className="qvm-section" id="beneficios">
-        <div className="qvm-container">
-          <div className="qvm-section-head">
-            <span className="qvm-eyebrow">Por qué vender en vivo</span>
-            <h2>
-              Potenciá tus ventas con <span className="qvm-accent-blue">{BRAND}</span>
-            </h2>
-            <p>
-              Llevá la experiencia de tu local a la pantalla de tus clientes. Mostrás,
-              asesorás, cobrás y despachás en una sola conversación.
-            </p>
+          <div className="qvm-hero-media">
+            <figure className="qvm-hero-photo">
+              <img src={heroImg} alt={HERO.imagenAlt} />
+              <span className="qvm-hero-live">● EN VIVO</span>
+            </figure>
+            <div className="qvm-float qvm-float-1">
+              <Icon name="card" /> <span>Cobrás en la llamada</span>
+            </div>
+            <div className="qvm-float qvm-float-2">
+              <Icon name="check" /> <span>Venta cerrada</span>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className="qvm-feature-grid">
-            {BENEFICIOS.map((b) => (
-              <article className="qvm-feature" key={b.title}>
-                <div className="qvm-feature-icon">
-                  <Icon name={b.icon} />
-                </div>
-                <h3>{b.title}</h3>
-                <p>{b.text}</p>
-              </article>
+      {/* ================= 3. PRUEBA SOCIAL + INTEGRACIONES ================= */}
+      <section className="qvm-proof" aria-label="Clientes e integraciones">
+        {CLIENTES.length > 0 && (
+          <div className="qvm-container qvm-clients">
+            <p className="qvm-strip-title">Ya venden con {MARCA.nombre}</p>
+            <div className="qvm-clients-row">
+              {CLIENTES.map((c) => (
+                <img key={c.nombre} src={c.logo} alt={c.nombre} title={c.nombre} loading="lazy" />
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="qvm-container">
+          <p className="qvm-strip-title">Cobrá y enviá con lo que ya usás</p>
+          <div className="qvm-integrations">
+            {INTEGRACIONES.map((it) => (
+              <LogoOTexto key={it.nombre} {...it} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ================= BANDA MUNDIAL ================= */}
-      <section className="qvm-world">
-        <div className="qvm-container qvm-world-inner">
-          <div>
-            <span className="qvm-eyebrow qvm-eyebrow-light">Tendencia global</span>
-            <h2>Vendé en vivo como se está vendiendo a nivel mundial</h2>
-          </div>
-          <p>
-            En China, Estados Unidos y Europa, comprar a través de un video en vivo ya es
-            algo cotidiano. La gente quiere ver el producto, hacer preguntas y que alguien
-            real la asesore. Ahora tu negocio puede ofrecer lo mismo, desde Argentina.
-          </p>
-        </div>
-      </section>
-
-      {/* ================= CÓMO FUNCIONA ================= */}
+      {/* ================= 4. CÓMO FUNCIONA + VIDEO ================= */}
       <section className="qvm-section" id="como-funciona">
         <div className="qvm-container">
           <div className="qvm-section-head">
             <span className="qvm-eyebrow">Cómo funciona</span>
-            <h2>De la consulta a la venta, en una llamada</h2>
+            <h2>De la consulta a la venta, en una videollamada</h2>
+            <p>Así de simple es vender en vivo desde tu local.</p>
           </div>
-          <div className="qvm-steps">
-            {PASOS.map((p) => (
-              <div className="qvm-step" key={p.n}>
-                <span className="qvm-step-n">{p.n}</span>
-                <h3>{p.title}</h3>
-                <p>{p.text}</p>
-              </div>
-            ))}
+          <div className="qvm-how">
+            <ol className="qvm-how-steps">
+              {PASOS.map((p, i) => (
+                <li className="qvm-how-step" key={p.titulo}>
+                  <span className="qvm-step-n">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3>{p.titulo}</h3>
+                    <p>{p.texto}</p>
+                  </div>
+                </li>
+              ))}
+              <li className="qvm-how-cta">
+                <a href="#agenda" className="qvm-btn qvm-btn-primary" onClick={() => trackClickDemo("como-funciona")}>
+                  Quiero verlo en una demo
+                </a>
+              </li>
+            </ol>
+            <VideoDemo video={VIDEO} />
           </div>
         </div>
       </section>
 
-      {/* ================= SOLUCIONES ================= */}
-      <section className="qvm-section qvm-section-tint" id="soluciones">
+      {/* ================= 5. BENEFICIOS (4) ================= */}
+      <section className="qvm-section qvm-section-tint" id="beneficios">
         <div className="qvm-container">
           <div className="qvm-section-head">
-            <span className="qvm-eyebrow">Soluciones</span>
-            <h2>Descubrí la mejor opción para tu negocio</h2>
-            <p>Empezá chico, medí resultados y escalá cuando estés listo.</p>
+            <span className="qvm-eyebrow">Beneficios</span>
+            <h2>Lo que gana tu negocio</h2>
           </div>
-          <div className="qvm-plans">
-            {PERFILES.map((p) => (
-              <article className={`qvm-plan ${p.featured ? "is-featured" : ""}`} key={p.tag}>
-                {p.featured && <span className="qvm-plan-badge">Recomendado</span>}
-                <span className="qvm-plan-tag">{p.tag}</span>
-                <h3>{p.title}</h3>
-                <p>{p.text}</p>
-                <ul>
-                  {p.items.map((it) => (
-                    <li key={it}>{it}</li>
-                  ))}
-                </ul>
-                <a
-                  href="#contacto"
-                  className={`qvm-btn ${p.featured ? "qvm-btn-primary" : "qvm-btn-outline"}`}
-                >
-                  {p.cta}
-                </a>
+          <div className="qvm-feature-grid qvm-feature-grid-4">
+            {BENEFICIOS.map((b) => (
+              <article className="qvm-feature" key={b.titulo}>
+                <div className="qvm-feature-icon">
+                  <Icon name={b.icono} />
+                </div>
+                <h3>{b.titulo}</h3>
+                <p>{b.texto}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ================= PLANES ================= */}
+      {/* ================= 6. TESTIMONIOS (solo con contenido real) ================= */}
+      {TESTIMONIOS.length > 0 && (
+        <section className="qvm-section" id="testimonios">
+          <div className="qvm-container">
+            <div className="qvm-section-head">
+              <span className="qvm-eyebrow">Testimonios</span>
+              <h2>Comercios que ya venden en vivo</h2>
+            </div>
+            <div className="qvm-testimonials">
+              {TESTIMONIOS.map((t) => (
+                <figure className="qvm-testimonial" key={`${t.local}-${t.nombre}`}>
+                  <blockquote>“{t.frase}”</blockquote>
+                  <figcaption>
+                    {t.foto && <img src={t.foto} alt="" loading="lazy" />}
+                    <span>
+                      <strong>{t.local}</strong>
+                      <small>
+                        {t.nombre}
+                        {t.rubro ? ` · ${t.rubro}` : ""}
+                      </small>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ================= 7. PLANES (unificados con soluciones) ================= */}
       <section className="qvm-section qvm-pricing" id="planes">
         <div className="qvm-container">
           <div className="qvm-section-head">
             <span className="qvm-eyebrow qvm-eyebrow-light">Planes</span>
-            <h2>Elegí el plan para tu marca</h2>
-            <p>
-              Un precio por marca, sin importar la cantidad de locales ni de usuarios.
-            </p>
+            <h2>Elegí el plan para tu negocio</h2>
+            <p>Un precio por marca, sin importar la cantidad de locales ni de usuarios.</p>
           </div>
           <div className="qvm-price-grid">
             {PLANES.map((p) => (
-              <article className={`qvm-price ${p.featured ? "is-featured" : ""}`} key={p.name}>
-                {p.featured && <span className="qvm-plan-badge">Recomendado</span>}
-                <h3>{p.name}</h3>
-                <p className="qvm-price-desc">{p.desc}</p>
+              <article className={`qvm-price ${p.recomendado ? "is-featured" : ""}`} key={p.id}>
+                {p.recomendado && <span className="qvm-plan-badge">Recomendado</span>}
+                <span className="qvm-price-ideal">Ideal para {p.idealPara.toLowerCase()}</span>
+                <h3>{p.nombre}</h3>
+                <p className="qvm-price-desc">{p.descripcion}</p>
+                <div className="qvm-price-amount">
+                  <span className="qvm-price-cur">$</span>
+                  <strong>{p.precio}</strong>
+                  <span className="qvm-price-per">/mes</span>
+                </div>
                 <div className="qvm-price-min">
                   <strong>{p.minutos}</strong>
                   <span>{p.unidad}</span>
@@ -448,117 +256,38 @@ export default function Landing() {
                     <li key={it}>{it}</li>
                   ))}
                 </ul>
-                <p className="qvm-price-note">Precio por marca · sin límite de locales ni usuarios</p>
-                <div className="qvm-price-amount">
-                  <span className="qvm-price-cur">$</span>
-                  <strong>{p.precio}</strong>
-                  <span className="qvm-price-per">/mes</span>
-                </div>
                 <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                    `¡Hola! Quiero contratar el ${p.name} de VideoCallShop.`
-                  )}`}
+                  href="#agenda"
+                  className="qvm-btn qvm-btn-primary qvm-btn-block"
+                  onClick={() => {
+                    setPlanInteres(p.nombre);
+                    trackClickPlan(p.nombre);
+                    trackClickDemo(`plan:${p.id}`);
+                  }}
+                >
+                  Agendá tu demo
+                </a>
+                <a
+                  href={waLink(`¡Hola! Me interesa el ${p.nombre} de VideoCallShop.`)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={trackWhatsApp}
-                  className="qvm-btn qvm-btn-primary qvm-btn-block"
+                  className="qvm-price-wa"
+                  onClick={() => trackWhatsApp(`plan:${p.id}`)}
                 >
-                  Contratar plan
+                  o consultá por WhatsApp
                 </a>
               </article>
             ))}
           </div>
-          <p className="qvm-price-legal">
-            Precios en pesos argentinos, por mes. Consultá condiciones e impuestos antes de contratar.
-          </p>
+          <p className="qvm-price-legal">{PLANES_LEGAL}</p>
         </div>
       </section>
 
-      {/* ================= FORMULARIO ================= */}
-      <section className="qvm-section" id="contacto">
-        <div className="qvm-container qvm-form-grid">
-          <div className="qvm-form-copy">
-            <span className="qvm-eyebrow">Guía gratis</span>
-            <h2>Cómo armar tu primera venta en vivo exitosa</h2>
-            <p>Dejanos tus datos y te mandamos la guía por WhatsApp, al instante.</p>
-            <ul className="qvm-checklist">
-              <li>Qué productos mostrar primero</li>
-              <li>Cómo cerrar la venta antes de cortar la llamada</li>
-              <li>Cómo ofrecer envíos y medios de pago sin fricción</li>
-              <li>Errores comunes que bajan las ventas</li>
-            </ul>
-          </div>
+      {/* ================= 8. AGENDÁ TU DEMO ================= */}
+      <Agenda whatsappHref={whatsappHref} planInteres={planInteres} />
 
-          <form className="qvm-card" onSubmit={handleSubmit}>
-            <h3>Solicitá tu demo</h3>
-            <label htmlFor="nombre">Nombre</label>
-            <input
-              id="nombre"
-              name="nombre"
-              type="text"
-              placeholder="Tu nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              required
-            />
-
-            <label htmlFor="negocio">Nombre del negocio</label>
-            <input
-              id="negocio"
-              name="negocio"
-              type="text"
-              placeholder="Ej: Indumentaria Sol"
-              value={form.negocio}
-              onChange={handleChange}
-              required
-            />
-
-            <label htmlFor="rubro">Rubro</label>
-            <select id="rubro" name="rubro" value={form.rubro} onChange={handleChange} required>
-              <option value="">Seleccioná una opción</option>
-              {RUBROS.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-
-            <label htmlFor="whatsapp">WhatsApp</label>
-            <input
-              id="whatsapp"
-              name="whatsapp"
-              type="tel"
-              placeholder="Ej: 341 123 4567"
-              value={form.whatsapp}
-              onChange={handleChange}
-              required
-            />
-
-            <button
-              className="qvm-btn qvm-btn-primary qvm-btn-block"
-              type="submit"
-              disabled={status === "sending"}
-            >
-              {status === "sending" ? "Enviando..." : "Quiero vender más"}
-            </button>
-
-            {status === "success" && (
-              <p className="qvm-form-note is-success">¡Listo! Te contactamos por WhatsApp en breve.</p>
-            )}
-            {status === "error" && (
-              <p className="qvm-form-note is-error">
-                Hubo un problema al enviar. Probá de nuevo o escribinos por WhatsApp.
-              </p>
-            )}
-            {status === "idle" && (
-              <p className="qvm-form-note">Te llega por WhatsApp en el momento. Sin spam.</p>
-            )}
-          </form>
-        </div>
-      </section>
-
-      {/* ================= FAQ ================= */}
-      <section className="qvm-section qvm-section-tint" id="faq">
+      {/* ================= 9. PREGUNTAS FRECUENTES ================= */}
+      <section className="qvm-section" id="faq">
         <div className="qvm-container qvm-faq-wrap">
           <div className="qvm-section-head">
             <span className="qvm-eyebrow">Preguntas frecuentes</span>
@@ -584,7 +313,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ================= CTA FINAL ================= */}
+      {/* ================= 10. CIERRE ================= */}
       <section className="qvm-cta">
         <div className="qvm-container qvm-cta-inner">
           <h2>
@@ -593,104 +322,109 @@ export default function Landing() {
             <span>Videollamadas y vivos en una sola app.</span>
           </h2>
           <div className="qvm-btn-row qvm-btn-row-center">
-            <a href="#agenda" className="qvm-btn qvm-btn-light">
-              Sumá tu comercio →
+            <a href="#agenda" className="qvm-btn qvm-btn-light" onClick={() => trackClickDemo("cierre")}>
+              Agendá tu demo →
             </a>
-            <a
-              href={whatsappHref}
-              onClick={trackWhatsApp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="qvm-btn qvm-btn-ghost-light"
-            >
+            <WaBtn ubicacion="cierre" className="qvm-btn qvm-btn-ghost-light">
               <WhatsAppIcon size={18} /> WhatsApp
-            </a>
+            </WaBtn>
           </div>
         </div>
       </section>
 
-      {/* ================= FOOTER ================= */}
+      {/* ================= 11. FOOTER ================= */}
       <footer className="qvm-footer">
         <div className="qvm-container qvm-footer-grid">
           <div>
             <a href="#top" className="qvm-logo qvm-logo-light" aria-label="VideoCallShop, inicio">
               <img src={logo} alt="" className="qvm-logo-img" />
-              <span>VideoCallShop</span>
+              <span>{MARCA.nombre}</span>
             </a>
-            <p className="qvm-footer-lema">{LEMA}</p>
+            <p className="qvm-footer-lema">{MARCA.lema}</p>
             <p className="qvm-footer-tag">
-              Conectamos compradores y comercios por videollamada para ver productos y recibir
-              asesoramiento en tiempo real. Hecho en Rosario.
+              App de ventas por videollamada para comercios. Hecho en Rosario.
             </p>
           </div>
           <div>
-            <h4>Soluciones</h4>
+            <h4>Producto</h4>
+            <a href="#como-funciona">Cómo funciona</a>
             <a href="#planes">Planes y precios</a>
-            <a href="#soluciones">Emprendedor</a>
-            <a href="#soluciones">Local</a>
-            <a href="#soluciones">Marca</a>
+            <a href="#faq">Preguntas frecuentes</a>
+            <a href="#agenda" onClick={() => trackClickDemo("footer")}>Agendá una demo</a>
           </div>
           <div>
             <h4>Contacto</h4>
-            <a href={whatsappHref}
-              onClick={trackWhatsApp} target="_blank" rel="noopener noreferrer">
-              {PHONE_DISPLAY}
+            <WaBtn ubicacion="footer">WhatsApp {MARCA.whatsappVisible}</WaBtn>
+            <a href={`https://instagram.com/${MARCA.instagram}`} target="_blank" rel="noopener noreferrer">
+              @{MARCA.instagram}
             </a>
-            <a href={`https://instagram.com/${INSTAGRAM}`} target="_blank" rel="noopener noreferrer">
-              @{INSTAGRAM}
+            <a href={`https://${MARCA.web}`} target="_blank" rel="noopener noreferrer">
+              {MARCA.web}
             </a>
-            <a href={`https://${WEB}`} target="_blank" rel="noopener noreferrer">
-              {WEB}
-            </a>
-            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-            <a href="#agenda">Agendá una reunión</a>
-            <a href="#contacto">Solicitá una demo</a>
+            <a href={`mailto:${MARCA.email}`}>{MARCA.email}</a>
           </div>
         </div>
         <div className="qvm-container qvm-footer-bottom">
-          © {new Date().getFullYear()} {BRAND} · {DOMAIN} — Todos los derechos reservados.
+          © {new Date().getFullYear()} {MARCA.nombre} · {MARCA.dominio} — Todos los derechos reservados.
         </div>
       </footer>
 
       {/* WHATSAPP FLOTANTE */}
-      <a
-        href={whatsappHref}
-              onClick={trackWhatsApp}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="qvm-whatsapp-float"
-        aria-label="Escribinos por WhatsApp"
-      >
+      <WaBtn ubicacion="flotante" className="qvm-whatsapp-float">
         <WhatsAppIcon />
-      </a>
+        <span className="qvm-sr">Escribinos por WhatsApp</span>
+      </WaBtn>
     </div>
   );
 }
 
-/* ---------- Mockup del hero: celular con una videollamada en vivo ---------- */
-function HeroMockup() {
+/* ---------- Logo de integración con respaldo en texto ---------- */
+function LogoOTexto({ nombre, logo }) {
+  const [falla, setFalla] = useState(!logo);
   return (
-    <div className="qvm-mockup" aria-hidden="true">
-      <div className="qvm-phone">
-        <div className="qvm-phone-screen">
-          <img
-            className="qvm-phone-img"
-            src={heroLive}
-            alt="Venta en vivo por videollamada con VideoCallShop"
-          />
-        </div>
-      </div>
+    <span className="qvm-integration" title={nombre}>
+      {falla ? (
+        <span className="qvm-integration-text">{nombre}</span>
+      ) : (
+        <img src={logo} alt={nombre} loading="lazy" onError={() => setFalla(true)} />
+      )}
+    </span>
+  );
+}
 
-      <div className="qvm-float qvm-float-1">
-        <Icon name="check" /> <span>Venta cerrada</span>
-      </div>
-      <div className="qvm-float qvm-float-2">
-        <Icon name="truck" /> <span>Envíos integrados</span>
-      </div>
-      <div className="qvm-float qvm-float-3">
-        <Icon name="card" /> <span>Checkout elegido</span>
-      </div>
-    </div>
+/* ---------- Video de la app funcionando ---------- */
+function VideoDemo({ video }) {
+  if (!video || !video.src) return null;
+  let player = null;
+  if (video.tipo === "mp4") {
+    player = <video src={video.src} controls playsInline preload="metadata" title={video.titulo} />;
+  } else if (video.tipo === "youtube") {
+    player = (
+      <iframe
+        src={video.src}
+        title={video.titulo}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  } else if (video.tipo === "instagram") {
+    const base = video.src.endsWith("/") ? video.src : `${video.src}/`;
+    player = (
+      <iframe
+        src={`${base}embed/`}
+        title={video.titulo}
+        loading="lazy"
+        scrolling="no"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      />
+    );
+  }
+  return (
+    <figure className={`qvm-video qvm-video-${video.tipo}`}>
+      <div className="qvm-video-frame">{player}</div>
+      <figcaption>{video.titulo}</figcaption>
+    </figure>
   );
 }
 
@@ -737,14 +471,13 @@ function Icon({ name }) {
           <path d="M3 10h18M7 15h4" />
         </svg>
       );
-    case "globe":
+    case "clock":
       return (
         <svg {...common}>
           <circle cx="12" cy="12" r="9" />
-          <path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" />
+          <path d="M12 7v5l3 2" />
         </svg>
       );
-    case "bolt":
     default:
       return (
         <svg {...common}>

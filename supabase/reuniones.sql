@@ -40,3 +40,10 @@ grant execute on function horarios_ocupados(date, date) to anon;
 
 -- Recordatorios: marca qué reuniones ya recibieron el aviso del día anterior
 alter table reuniones add column if not exists recordatorio_enviado boolean not null default false;
+
+-- Formulario nuevo (oct 2026): nombre, negocio, rubro, WhatsApp y mail opcional.
+-- "empresa" guarda el negocio y "telefono" el WhatsApp.
+alter table reuniones add column if not exists rubro text;
+alter table reuniones add column if not exists plan text;
+alter table reuniones alter column email drop not null;
+alter table reuniones alter column interes drop not null;

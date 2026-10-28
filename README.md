@@ -33,6 +33,24 @@ Los colores se cambian en `src/components/Landing.css`, en el bloque `:root`.
 
 ---
 
+## Editar el contenido (textos, planes, logos, testimonios, video)
+
+Todo está en **`src/contenido.js`**. Además:
+
+| Qué | Dónde |
+|---|---|
+| Foto del hero (comerciante real en su local, vertical ~1200×1500) | reemplazar `src/assets/hero.jpg` |
+| Logos de medios de pago y envío (oficiales, SVG/PNG transparente) | `public/logos/` con los nombres de `INTEGRACIONES` (si falta el archivo, se ve el nombre en texto) |
+| Logos de comercios que ya usan la app (con permiso) | `public/clientes/` + lista `CLIENTES` |
+| Testimonios (foto, nombre, local, frase) | `public/testimonios/` + lista `TESTIMONIOS` |
+| Video de la app (30–60 s) | `VIDEO` (mp4 en `public/video/`, YouTube o reel de Instagram) |
+
+Las secciones "Ya venden con VideoCallShop" y "Testimonios" **sólo aparecen cuando hay contenido real cargado**.
+
+## Medición (Meta Pixel + GTM)
+
+Eventos y nombres para la agencia en **`MEDICION.md`**. Código en `src/medicion.js`.
+
 ## Paso 1 — Subir a GitHub
 
 1. Creá un repositorio nuevo en GitHub (ej: `quierovendermas`).
@@ -127,15 +145,24 @@ principio de `src/components/Agenda.jsx` (`DIAS_DISPONIBLES`, `HORA_INICIO`, `HO
 
 ## Mails de la agenda
 
-**Confirmación al cliente (inmediata):** al agendar, FormSubmit te manda el aviso a vos y
-una respuesta automática al mail del cliente con el día y la hora. La primera vez,
-FormSubmit te manda un mail para **activar** el formulario: hacé clic en el link.
+**Aviso a VideoCallShop (inmediato):** lo envía FormSubmit a videocallshoppping@gmail.com.
+
+**Confirmación al cliente (inmediata) — EmailJS, gratis hasta 200 mails/mes:**
+1. Creá una cuenta en emailjs.com.
+2. **Email Services → Add New Service → Gmail** → conectá videocallshoppping@gmail.com. Copiá el **Service ID**.
+3. **Email Templates → Create New Template**:
+   - Subject: `Tu reunión con VideoCallShop: {{fecha}} a las {{hora}} h`
+   - To Email: `{{to_email}}` · From Name: `VideoCallShop` · Reply To: `{{reply_to}}`
+   - Contenido: pegá `emails/emailjs-confirmacion.html` (botón "Code"/HTML del editor).
+   - Guardá y copiá el **Template ID**.
+4. **Account → General → Public Key**: copiala.
+5. Pegá los 3 valores en `src/components/Agenda.jsx` (`EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`).
 
 **Recordatorio un día antes:** lo envía GitHub Actions todos los días a las 10:00
 (`.github/workflows/recordatorios.yml` + `scripts/recordatorios/enviar.mjs`).
 Configuración, una sola vez:
 
-1. Supabase → SQL Editor → corré de nuevo `supabase/reuniones.sql` (agrega la columna `recordatorio_enviado`).
+1. Supabase → SQL Editor → corré de nuevo `supabase/reuniones.sql` (agrega `recordatorio_enviado`, `rubro`, `plan` y hace opcional el mail). Se puede correr varias veces sin problema.
 2. Supabase → Project Settings → API Keys → **Secret keys** → creá una clave nueva (`sb_secret_...`).
 3. Gmail → myaccount.google.com → Seguridad → activá la verificación en 2 pasos →
    **Contraseñas de aplicaciones** → creá una (16 letras).
