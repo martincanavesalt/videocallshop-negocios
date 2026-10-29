@@ -41,13 +41,13 @@ export const CLIENTES = [];
 // Si el archivo no está, se muestra el nombre en texto.
 // Dejá solo los que realmente funcionan con la app.
 export const INTEGRACIONES = [
-  { nombre: "Mercado Pago", logo: "/logos/mercadopago.svg" },
-  { nombre: "Tiendanube", logo: "/logos/tiendanube.svg" },
-  { nombre: "Tarjetas de crédito y débito", logo: "/logos/tarjetas.svg" },
-  { nombre: "Transferencia", logo: "/logos/transferencia.svg" },
-  { nombre: "Andreani", logo: "/logos/andreani.svg" },
-  { nombre: "Correo Argentino", logo: "/logos/correo-argentino.svg" },
-  { nombre: "OCA", logo: "/logos/oca.svg" },
+  { nombre: "Mercado Pago", logo: "/logos/mercadopago.png" },
+  { nombre: "Tiendanube", logo: "/logos/tiendanube.png" },
+  { nombre: "Andreani", logo: "/logos/andreani.png" },
+  { nombre: "Correo Argentino", logo: "/logos/correo-argentino.png" },
+  { nombre: "OCA", logo: "/logos/oca.png" },
+  { nombre: "Tarjetas de crédito y débito", logo: null },
+  { nombre: "Transferencia", logo: null },
 ];
 
 export const PASOS = [

@@ -1534,3 +1534,18 @@ body {
     padding: 18px;
   }
 }
+
+/* franja de integraciones: que entre en una fila en escritorio */
+.qvm-integrations {
+  gap: 10px;
+}
+.qvm-integration {
+  min-height: 50px;
+  padding: 10px 14px;
+}
+.qvm-integration img {
+  height: 26px;
+}
+.qvm-integration-text {
+  font-size: 14px;
+}
