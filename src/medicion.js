@@ -1,29 +1,62 @@
 // Medición de conversiones (Meta Pixel + Google Tag Manager).
 //
-// El código base del Pixel y de GTM está en public/index.html. Acá se disparan
-// los eventos de cada acción. Cada evento sale por DOS vías:
-//   1) Meta Pixel directo (fbq): eventos estándar que Meta usa para optimizar.
+// Google Tag Manager (GTM-MGQGXK74) está en public/index.html y es quien carga
+// el Meta Pixel. No hay otro píxel en el código: así cada evento llega una sola vez.
+// Acá se disparan los eventos de cada acción. Cada evento sale por DOS vías:
+//   1) Meta Pixel (fbq, cargado por GTM): eventos estándar que Meta usa para optimizar.
 //   2) dataLayer de GTM: para que la agencia arme sus propios tags/conversiones.
 // Detalle para quien administra las campañas: MEDICION.md
 
-function fbqTrack(evento, params) {
-  try {
-    if (typeof window !== "undefined" && typeof window.fbq === "function") {
-      window.fbq("track", evento, params || {});
+// GTM carga el píxel de forma asíncrona. Si alguien hace clic antes de que
+// window.fbq exista, guardamos el evento y lo mandamos apenas aparece
+// (reintentamos hasta 10 s; si el píxel nunca carga, se descarta sin romper nada).
+const pendientes = [];
+let esperando = false;
+
+function enviarPendientes() {
+  while (pendientes.length) {
+    try {
+      window.fbq.apply(window, pendientes.shift());
+    } catch (err) {
+      /* noop */
     }
+  }
+}
+
+function fbqSend(...args) {
+  try {
+    if (typeof window === "undefined") return;
+    if (typeof window.fbq === "function") {
+      window.fbq(...args);
+      return;
+    }
+    pendientes.push(args);
+    if (esperando) return;
+    esperando = true;
+    let intentos = 0;
+    const timer = setInterval(() => {
+      intentos += 1;
+      if (typeof window.fbq === "function") {
+        clearInterval(timer);
+        esperando = false;
+        enviarPendientes();
+      } else if (intentos >= 20) {
+        clearInterval(timer);
+        esperando = false;
+        pendientes.length = 0;
+      }
+    }, 500);
   } catch (err) {
     // la medición nunca debe romper la página
   }
 }
 
+function fbqTrack(evento, params) {
+  fbqSend("track", evento, params || {});
+}
+
 function fbqCustom(evento, params) {
-  try {
-    if (typeof window !== "undefined" && typeof window.fbq === "function") {
-      window.fbq("trackCustom", evento, params || {});
-    }
-  } catch (err) {
-    /* noop */
-  }
+  fbqSend("trackCustom", evento, params || {});
 }
 
 function dataLayerPush(evento, params) {
@@ -43,6 +76,9 @@ export function trackWhatsApp(ubicacion) {
 }
 
 // Clic en "Quiero una demo" / "Agendá una demo" (lleva al bloque de agenda).
+// Es un evento personalizado a propósito: NO usar "Schedule" acá. "Schedule" se
+// reserva para la reunión confirmada; si lo disparara el clic, Meta contaría
+// cada visita al bloque como una reunión agendada.
 export function trackClickDemo(ubicacion) {
   fbqCustom("ClickAgendaDemo", { ubicacion });
   dataLayerPush("vcs_demo_click", { ubicacion });
