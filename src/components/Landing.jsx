@@ -365,7 +365,8 @@ export default function Landing() {
           </div>
         </div>
         <div className="qvm-container qvm-footer-bottom">
-          © {new Date().getFullYear()} {MARCA.nombre} · {MARCA.dominio} — Todos los derechos reservados.
+          © {new Date().getFullYear()} {MARCA.razonSocial} · CUIT {MARCA.cuit} · {MARCA.domicilio} ·{" "}
+          <a href="/privacidad.html">Política de privacidad</a>
         </div>
       </footer>
 

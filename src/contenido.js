@@ -8,6 +8,9 @@
 
 export const MARCA = {
   nombre: "VideoCallShop",
+  razonSocial: "VIDEO CALL SHOP S.A.S.",
+  cuit: "30-71592719-1",
+  domicilio: "9 de Julio 555 9° A, Rosario, Santa Fe",
   dominio: "quierovendermas.com.ar",
   lema: "Comprá con alguien que te asesore.",
   web: "videocallshop.com",

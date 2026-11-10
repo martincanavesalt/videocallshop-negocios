@@ -1549,3 +1549,5 @@ body {
 .qvm-integration-text {
   font-size: 14px;
 }
+
+.qvm-footer-bottom a { color: inherit; text-decoration: underline; }

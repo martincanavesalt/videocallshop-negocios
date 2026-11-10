@@ -492,6 +492,7 @@ export default function Agenda({ whatsappHref, planInteres }) {
               <button type="submit" className="qvm-btn qvm-btn-primary" disabled={!hora || status === "sending"}>
                 {status === "sending" ? "Agendando..." : "Agendar demo"}
               </button>
+              <p className="ag-legal">Al enviar aceptás nuestra <a href="/privacidad.html" target="_blank" rel="noopener noreferrer">política de privacidad</a>.</p>
               {status === "error" && (
                 <p className="ag-msg is-error">No pudimos agendar la reunión. Probá de nuevo o escribinos por WhatsApp.</p>
               )}
@@ -526,6 +527,7 @@ export default function Agenda({ whatsappHref, planInteres }) {
                   <button type="submit" className="qvm-btn qvm-btn-primary qvm-btn-block ag-guia-btn" disabled={guiaStatus === "sending"}>
                     {guiaStatus === "sending" ? "Enviando..." : "Quiero la guía gratis"}
                   </button>
+                  <p className="ag-legal">Al enviar aceptás nuestra <a href="/privacidad.html" target="_blank" rel="noopener noreferrer">política de privacidad</a>.</p>
                   {guiaStatus === "error" && (
                     <p className="ag-msg is-error">Hubo un problema al enviar. Probá de nuevo o escribinos por WhatsApp.</p>
                   )}

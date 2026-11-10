@@ -438,3 +438,7 @@
     padding: 10px 10px;
   }
 }
+
+/* Aviso de privacidad bajo los formularios */
+.ag-legal { font-size: 0.8rem; color: var(--muted, #6b7a90); margin: 8px 0 0; }
+.ag-legal a { color: var(--blue-dark, #0f6fb0); }
